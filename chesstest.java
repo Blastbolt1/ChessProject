@@ -20,6 +20,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;  
 import javafx.stage.Stage; 
 
+// Main class
 class Game {
 	double xOffset;
 	double yOffset;
