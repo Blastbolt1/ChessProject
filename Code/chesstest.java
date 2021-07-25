@@ -34,6 +34,18 @@ class Game {
 	logicContainer pieceLogic;
 	Piece[][] arrayLogic;
 	Pane pane;
+	Image WhitePawn;
+	Image WhiteRook;
+	Image WhiteKnight;
+	Image WhiteBishop;
+	Image WhiteQueen;
+	Image WhiteKing;
+	Image BlackPawn;
+	Image BlackRook;
+	Image BlackKnight;
+	Image BlackBishop;
+	Image BlackQueen;
+	Image BlackKing;
 	
 	public Game (double xOffset, double yOffset, double squareSize, Pane pane, boolean turn) {
 		this.xOffset = xOffset;
@@ -75,19 +87,19 @@ class Game {
 	
 	public void initPieces(int board[][]) throws FileNotFoundException {
 		//Assigning images
-		Image WhitePawn = new Image(new FileInputStream("C:\\Users\\alex\\Documents\\CS\\Chess\\White\\WhitePawn.png"));
-		Image WhiteRook = new Image(new FileInputStream("C:\\Users\\alex\\Documents\\CS\\Chess\\White\\WhiteRook.png"));
-		Image WhiteKnight = new Image(new FileInputStream("C:\\Users\\alex\\Documents\\CS\\Chess\\White\\WhiteKnight.png"));
-		Image WhiteBishop = new Image(new FileInputStream("C:\\Users\\alex\\Documents\\CS\\Chess\\White\\WhiteBishop.png"));
-		Image WhiteQueen = new Image(new FileInputStream("C:\\Users\\alex\\Documents\\CS\\Chess\\White\\WhiteQueen.png"));
-		Image WhiteKing = new Image(new FileInputStream("C:\\Users\\alex\\Documents\\CS\\Chess\\White\\WhiteKing.png"));
+		WhitePawn = new Image(new FileInputStream("E:\\Coding\\ChessProject\\Graphics\\White\\WhitePawn.png"));
+		WhiteRook = new Image(new FileInputStream("E:\\Coding\\ChessProject\\Graphics\\White\\WhiteRook.png"));
+		WhiteKnight = new Image(new FileInputStream("E:\\Coding\\ChessProject\\Graphics\\White\\WhiteKnight.png"));
+		WhiteBishop = new Image(new FileInputStream("E:\\Coding\\ChessProject\\Graphics\\White\\WhiteBishop.png"));
+		WhiteQueen = new Image(new FileInputStream("E:\\Coding\\ChessProject\\Graphics\\White\\WhiteQueen.png"));
+		WhiteKing = new Image(new FileInputStream("E:\\Coding\\ChessProject\\Graphics\\White\\WhiteKing.png"));
 		
-		Image BlackPawn = new Image(new FileInputStream("C:\\Users\\alex\\Documents\\CS\\Chess\\Black\\BlackPawn.png"));
-		Image BlackRook = new Image(new FileInputStream("C:\\Users\\alex\\Documents\\CS\\Chess\\Black\\BlackRook.png"));
-		Image BlackKnight = new Image(new FileInputStream("C:\\Users\\alex\\Documents\\CS\\Chess\\Black\\BlackKnight.png"));
-		Image BlackBishop = new Image(new FileInputStream("C:\\Users\\alex\\Documents\\CS\\Chess\\Black\\BlackBishop.png"));
-		Image BlackQueen = new Image(new FileInputStream("C:\\Users\\alex\\Documents\\CS\\Chess\\Black\\BlackQueen.png"));
-		Image BlackKing = new Image(new FileInputStream("C:\\Users\\alex\\Documents\\CS\\Chess\\Black\\BlackKing.png"));
+		BlackPawn = new Image(new FileInputStream("E:\\Coding\\ChessProject\\Graphics\\Black\\BlackPawn.png"));
+		BlackRook = new Image(new FileInputStream("E:\\Coding\\ChessProject\\Graphics\\Black\\BlackRook.png"));
+		BlackKnight = new Image(new FileInputStream("E:\\Coding\\ChessProject\\Graphics\\Black\\BlackKnight.png"));
+		BlackBishop = new Image(new FileInputStream("E:\\Coding\\ChessProject\\Graphics\\Black\\BlackBishop.png"));
+		BlackQueen = new Image(new FileInputStream("E:\\Coding\\ChessProject\\Graphics\\Black\\BlackQueen.png"));
+		BlackKing = new Image(new FileInputStream("E:\\Coding\\ChessProject\\Graphics\\Black\\BlackKing.png"));
 				
 		this.pieceGraphicsMaster = new ImageView[8][8];
 		this.pieceLogic = new logicContainer();
@@ -259,33 +271,68 @@ class Game {
 			int x = (int)xAxis;
 			int y = (int)yAxis;
 			
+			boolean isPromotion = false;
+			
 			if (board[logic.xCoordNew][logic.yCoordNew] > 0) {
 				this.pane.getChildren().remove(this.pieceGraphicsMaster[logic.xCoordNew][logic.yCoordNew]);
 			}
 			
-			if (board[logic.xCoordNew][logic.yCoordNew] == 1 || board[logic.xCoordNew][logic.yCoordNew] == 7) {
+			if (board[logic.xCoordOld][logic.yCoordOld] == 1 || board[logic.xCoordOld][logic.yCoordOld] == 7) {
 				Pawn testPawn = new Pawn(logic.xCoordNew, logic.yCoordNew, logic.firstMove, logic.colour, false);
-
+				
 				if (testPawn.isEndRank()) {
+					System.out.println("ayo");
+					isPromotion = true;
 					
+					this.pane.getChildren().remove(this.pieceGraphicsMaster[logic.xCoordOld][logic.yCoordOld]);
+					
+					board[logic.xCoordOld][logic.yCoordOld] = 0;
+					
+					if (testPawn.colour) {
+						this.pieceGraphicsMaster[logic.xCoordNew][logic.yCoordNew] = new ImageView(WhiteQueen);
+						
+						board[logic.xCoordNew][logic.yCoordNew] = 5;
+						
+						this.arrayLogic[logic.xCoordNew][logic.yCoordNew] = new Queen(logic.xCoordNew, logic.yCoordNew, true, false);
+
+					} else {
+						this.pieceGraphicsMaster[logic.xCoordNew][logic.yCoordNew] = new ImageView(BlackQueen);
+						
+						board[logic.xCoordNew][logic.yCoordNew] = 11;
+						
+						this.arrayLogic[logic.xCoordNew][logic.yCoordNew] = new Queen(logic.xCoordNew, logic.yCoordNew, false, false);
+					}
+					piecePos(this.pieceGraphicsMaster[logic.xCoordNew][logic.yCoordNew], logic.xCoordNew, logic.yCoordNew, 0.092, 0.03);
+					this.pane.getChildren().add(this.pieceGraphicsMaster[logic.xCoordNew][logic.yCoordNew]);
+					
+					this.arrayLogic[logic.xCoordOld][logic.yCoordOld] = new Piece();
 				}
 			}
 			
-			this.pieceGraphicsMaster[logic.xCoordNew][logic.yCoordNew] = this.pieceGraphicsMaster[logic.xCoordOld][logic.yCoordOld];
-			this.pieceGraphicsMaster[logic.xCoordOld][logic.yCoordOld] = new ImageView();
-			
-			this.pane.getChildren().remove(this.pieceGraphicsMaster[logic.xCoordOld][logic.yCoordOld]);
-			
-			this.arrayLogic[logic.xCoordNew][logic.yCoordNew] = this.arrayLogic[logic.xCoordOld][logic.yCoordOld];
-			this.arrayLogic[logic.xCoordOld][logic.yCoordOld] = new Piece();
-			
-			board[logic.xCoordOld][logic.yCoordOld] = 0;
-			board[logic.xCoordNew][logic.yCoordNew] = newSquare;
-			
-			this.arrayLogic[logic.xCoordNew][logic.yCoordNew].xCoordOld = this.arrayLogic[logic.xCoordNew][logic.yCoordNew].xCoordNew;
-			this.arrayLogic[logic.xCoordNew][logic.yCoordNew].yCoordOld = this.arrayLogic[logic.xCoordNew][logic.yCoordNew].yCoordNew;
+			if (isPromotion == false) {
+				this.pieceGraphicsMaster[logic.xCoordNew][logic.yCoordNew] = this.pieceGraphicsMaster[logic.xCoordOld][logic.yCoordOld];
+				this.pieceGraphicsMaster[logic.xCoordOld][logic.yCoordOld] = new ImageView();
+				this.pane.getChildren().remove(this.pieceGraphicsMaster[logic.xCoordOld][logic.yCoordOld]);
+				
+				this.arrayLogic[logic.xCoordNew][logic.yCoordNew] = this.arrayLogic[logic.xCoordOld][logic.yCoordOld];
+				this.arrayLogic[logic.xCoordOld][logic.yCoordOld] = new Piece();
+				
+				board[logic.xCoordOld][logic.yCoordOld] = 0;
+				board[logic.xCoordNew][logic.yCoordNew] = newSquare;
+				
+				this.arrayLogic[logic.xCoordNew][logic.yCoordNew].xCoordOld = this.arrayLogic[logic.xCoordNew][logic.yCoordNew].xCoordNew;
+				this.arrayLogic[logic.xCoordNew][logic.yCoordNew].yCoordOld = this.arrayLogic[logic.xCoordNew][logic.yCoordNew].yCoordNew;
+			}
 			
 			this.turn = !this.turn;
+			/*
+			for (int i = 0; i < 8; i++) {
+				for (int j = 0; j < 8; j++) {
+					System.out.print(board[j][i] + " ");
+				}
+				System.out.println();
+			}*/
+			
 		} else {
 			graphic.setX(this.xOffset - (xOff * this.squareSize) + (logic.xCoordOld * this.squareSize));
 			graphic.setY(this.yOffset - (yOff * this.squareSize) + (logic.yCoordOld * this.squareSize));
@@ -353,142 +400,144 @@ public class chesstest extends Application {
 				int y = selector.ySelect;
 				
 				System.out.println("This Piece can move to the following squares:");
-
-				switch (logicBoard.logicBoard[x][y]) {
-					case 1:
-					case 7:
-						Pawn myPawn = new Pawn(x, y, Game.arrayLogic[x][y].firstMove, Game.arrayLogic[x][y].colour, false);
-						Game.imageXOffset = 0.092;
-						Game.imageYOffset = 0.07;
-						
-						for (int i = 0; i < 8; i++) {
-							for (int j = 0; j < 8; j++) {
-								
-								myPawn.xCoordNew = j;
-								myPawn.yCoordNew = i;
-								
-								if (myPawn.Move(logicBoard.logicBoard, Game.turn)) {
-									Game.possibilityBoard[j][i] = true;
-									System.out.println("X: " + j + " Y: " + i);
-								} else {
-									Game.possibilityBoard[j][i] = false;
+				
+				if (x > -1 && x < 8 && y > -1 && y < 8) {
+					switch (logicBoard.logicBoard[x][y]) {
+						case 1:
+						case 7:
+							Pawn myPawn = new Pawn(x, y, Game.arrayLogic[x][y].firstMove, Game.arrayLogic[x][y].colour, false);
+							Game.imageXOffset = 0.092;
+							Game.imageYOffset = 0.07;
+							
+							for (int i = 0; i < 8; i++) {
+								for (int j = 0; j < 8; j++) {
+									
+									myPawn.xCoordNew = j;
+									myPawn.yCoordNew = i;
+									
+									if (myPawn.Move(logicBoard.logicBoard, Game.turn)) {
+										Game.possibilityBoard[j][i] = true;
+										System.out.println("X: " + j + " Y: " + i);
+									} else {
+										Game.possibilityBoard[j][i] = false;
+									}
 								}
 							}
-						}
-						
-						break;
-					case 2:
-					case 8:
-						Knight myKnight = new Knight(x, y, Game.arrayLogic[x][y].colour, false);
-						Game.imageXOffset = 0.082;
-						Game.imageYOffset = 0.02;
-
-						for (int i = 0; i < 8; i++) {
-							for (int j = 0; j < 8; j++) {
-								
-								myKnight.xCoordNew = j;
-								myKnight.yCoordNew = i;
-								
-								if (myKnight.Move(logicBoard.logicBoard, Game.turn)) {
-									Game.possibilityBoard[j][i] = true;
-									System.out.println("X: " + j + " Y: " + i);
-								} else {
-									Game.possibilityBoard[j][i] = false;
+							
+							break;
+						case 2:
+						case 8:
+							Knight myKnight = new Knight(x, y, Game.arrayLogic[x][y].colour, false);
+							Game.imageXOffset = 0.082;
+							Game.imageYOffset = 0.02;
+	
+							for (int i = 0; i < 8; i++) {
+								for (int j = 0; j < 8; j++) {
+									
+									myKnight.xCoordNew = j;
+									myKnight.yCoordNew = i;
+									
+									if (myKnight.Move(logicBoard.logicBoard, Game.turn)) {
+										Game.possibilityBoard[j][i] = true;
+										System.out.println("X: " + j + " Y: " + i);
+									} else {
+										Game.possibilityBoard[j][i] = false;
+									}
 								}
 							}
-						}
-						
-						break;
-					case 3:
-					case 9:
-						Bishop myBishop = new Bishop(x, y, Game.arrayLogic[x][y].colour, false);
-						Game.imageXOffset = 0.082;
-						Game.imageYOffset = 0.02;
-
-						for (int i = 0; i < 8; i++) {
-							for (int j = 0; j < 8; j++) {
-								
-								myBishop.xCoordNew = j;
-								myBishop.yCoordNew = i;
-								
-								if (myBishop.Move(logicBoard.logicBoard, Game.turn)) {
-									Game.possibilityBoard[j][i] = true;
-									System.out.println("X: " + j + " Y: " + i);
-								} else {
-									Game.possibilityBoard[j][i] = false;
+							
+							break;
+						case 3:
+						case 9:
+							Bishop myBishop = new Bishop(x, y, Game.arrayLogic[x][y].colour, false);
+							Game.imageXOffset = 0.082;
+							Game.imageYOffset = 0.02;
+	
+							for (int i = 0; i < 8; i++) {
+								for (int j = 0; j < 8; j++) {
+									
+									myBishop.xCoordNew = j;
+									myBishop.yCoordNew = i;
+									
+									if (myBishop.Move(logicBoard.logicBoard, Game.turn)) {
+										Game.possibilityBoard[j][i] = true;
+										System.out.println("X: " + j + " Y: " + i);
+									} else {
+										Game.possibilityBoard[j][i] = false;
+									}
 								}
 							}
-						}
-						
-						break;
-					case 4:
-					case 10:
-						Rook myRook = new Rook(x, y, Game.arrayLogic[x][y].colour, false);
-						Game.imageXOffset = 0.1;
-						Game.imageYOffset = 0.06;
-						
-						for (int i = 0; i < 8; i++) {
-							for (int j = 0; j < 8; j++) {
-								
-								myRook.xCoordNew = j;
-								myRook.yCoordNew = i;
-								
-								if (myRook.Move(logicBoard.logicBoard, Game.turn)) {
-									Game.possibilityBoard[j][i] = true;
-									System.out.println("X: " + j + " Y: " + i);
-								} else {
-									Game.possibilityBoard[j][i] = false;
+							
+							break;
+						case 4:
+						case 10:
+							Rook myRook = new Rook(x, y, Game.arrayLogic[x][y].colour, false);
+							Game.imageXOffset = 0.1;
+							Game.imageYOffset = 0.06;
+							
+							for (int i = 0; i < 8; i++) {
+								for (int j = 0; j < 8; j++) {
+									
+									myRook.xCoordNew = j;
+									myRook.yCoordNew = i;
+									
+									if (myRook.Move(logicBoard.logicBoard, Game.turn)) {
+										Game.possibilityBoard[j][i] = true;
+										System.out.println("X: " + j + " Y: " + i);
+									} else {
+										Game.possibilityBoard[j][i] = false;
+									}
 								}
 							}
-						}
-						
-						break;
-					case 5:
-					case 11:
-						Queen myQueen = new Queen(x, y, Game.arrayLogic[x][y].colour, false);
-						Game.imageXOffset = 0.092;
-						Game.imageYOffset = 0.03;
-						
-						for (int i = 0; i < 8; i++) {
-							for (int j = 0; j < 8; j++) {
-								
-								myQueen.xCoordNew = j;
-								myQueen.yCoordNew = i;
-								
-								if (myQueen.Move(logicBoard.logicBoard, Game.turn)) {
-									Game.possibilityBoard[j][i] = true;
-									System.out.println("X: " + j + " Y: " + i);
-								} else {
-									Game.possibilityBoard[j][i] = false;
+							
+							break;
+						case 5:
+						case 11:
+							Queen myQueen = new Queen(x, y, Game.arrayLogic[x][y].colour, false);
+							Game.imageXOffset = 0.092;
+							Game.imageYOffset = 0.03;
+							
+							for (int i = 0; i < 8; i++) {
+								for (int j = 0; j < 8; j++) {
+									
+									myQueen.xCoordNew = j;
+									myQueen.yCoordNew = i;
+									
+									if (myQueen.Move(logicBoard.logicBoard, Game.turn)) {
+										Game.possibilityBoard[j][i] = true;
+										System.out.println("X: " + j + " Y: " + i);
+									} else {
+										Game.possibilityBoard[j][i] = false;
+									}
 								}
-							}
-						}						
-						
-						break;
-					case 6:
-					case 12:
-						King myKing = new King(x, y, Game.arrayLogic[x][y].colour, false);
-						Game.imageXOffset = 0.092;
-						Game.imageYOffset = 0.03;
-						
-						for (int i = 0; i < 8; i++) {
-							for (int j = 0; j < 8; j++) {
-								
-								myKing.xCoordNew = j;
-								myKing.yCoordNew = i;
-								
-								if (myKing.Move(logicBoard.logicBoard, Game.turn)) {
-									Game.possibilityBoard[j][i] = true;
-									System.out.println("X: " + j + " Y: " + i);
-								} else {
-									Game.possibilityBoard[j][i] = false;
+							}						
+							
+							break;
+						case 6:
+						case 12:
+							King myKing = new King(x, y, Game.arrayLogic[x][y].colour, false);
+							Game.imageXOffset = 0.092;
+							Game.imageYOffset = 0.03;
+							
+							for (int i = 0; i < 8; i++) {
+								for (int j = 0; j < 8; j++) {
+									
+									myKing.xCoordNew = j;
+									myKing.yCoordNew = i;
+									
+									if (myKing.Move(logicBoard.logicBoard, Game.turn)) {
+										Game.possibilityBoard[j][i] = true;
+										System.out.println("X: " + j + " Y: " + i);
+									} else {
+										Game.possibilityBoard[j][i] = false;
+									}
 								}
-							}
-						}						
-						
-						break;
-					default:
-						break;
+							}						
+							
+							break;
+						default:
+							break;
+					}
 				}
 				
 				
@@ -529,10 +578,15 @@ public class chesstest extends Application {
 				selector.mouseX = event.getX();
 				selector.mouseY = event.getY();
 				
-				if (logicBoard.logicBoard[selector.xSelect][selector.ySelect] > 0) {
-					if (Game.turn == Game.arrayLogic[selector.xSelect][selector.ySelect].colour) {
-						Game.pieceGraphicsMaster[selector.xSelect][selector.ySelect].setX(selector.mouseX - (squareSize/2));
-						Game.pieceGraphicsMaster[selector.xSelect][selector.ySelect].setY(selector.mouseY - (squareSize/2));
+				int x = selector.xSelect;
+				int y = selector.ySelect;
+				
+				if (x > -1 && x < 8 && y > -1 && y < 8) {
+					if (logicBoard.logicBoard[selector.xSelect][selector.ySelect] > 0) {
+						if (Game.turn == Game.arrayLogic[selector.xSelect][selector.ySelect].colour) {
+							Game.pieceGraphicsMaster[selector.xSelect][selector.ySelect].setX(selector.mouseX - (squareSize/2));
+							Game.pieceGraphicsMaster[selector.xSelect][selector.ySelect].setY(selector.mouseY - (squareSize/2));
+						}
 					}
 				}
 				

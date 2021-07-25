@@ -1,0 +1,5 @@
+1. Circles that show where you can move
+2. Checks
+3. Castling
+4. En Passant
+5. Flip Board
