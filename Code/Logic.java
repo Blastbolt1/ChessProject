@@ -101,7 +101,7 @@ class Piece {
 		}
 	}
 	
-	public boolean canMove(int xOld, int xNew, int yOld, int yNew, int[][] squares, boolean colour, boolean turn) {
+	public boolean canMove(int xOld, int xNew, int yOld, int yNew, int[][] squares, boolean colour, boolean turn, boolean isCheck) {
 		
 		xCoordOld = xOld;
 		xCoordNew = xNew;
@@ -275,7 +275,7 @@ class Pawn extends Piece {
 						return false;
 					} else {
 						if (firstMove) {
-							if (xCoordOld == xCoordNew && yCoordNew >= yCoordOld - 2) {
+							if (xCoordOld == xCoordNew && yCoordNew >= yCoordOld - 2 && yCoordNew < yCoordOld) {
 								return true;
 							} else {
 								return false;
@@ -306,7 +306,7 @@ class Pawn extends Piece {
 						return false;
 					} else {
 						if (firstMove) {
-							if (xCoordOld == xCoordNew && yCoordNew <= yCoordOld + 2) {
+							if (xCoordOld == xCoordNew && yCoordNew <= yCoordOld + 2 && yCoordNew > yCoordOld) {
 								return true;
 							} else {
 								return false;
