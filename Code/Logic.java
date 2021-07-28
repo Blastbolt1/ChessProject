@@ -101,7 +101,7 @@ class Piece {
 		}
 	}
 	
-	public boolean canMove(int xOld, int xNew, int yOld, int yNew, int[][] squares, boolean colour, boolean turn, boolean isCheck) {
+	public boolean canMove(int xOld, int xNew, int yOld, int yNew, int[][] squares, boolean colour, boolean turn) {
 		
 		xCoordOld = xOld;
 		xCoordNew = xNew;
@@ -544,5 +544,200 @@ class selectPiece {
 	
 	public selectPiece(boolean mouseDown) {
 		this.mouseDown = mouseDown;
+	}
+}
+
+class checkHandler {
+	boolean isCheck;
+	
+	public boolean isPieceChecking(int piece, int xCoordOld, int yCoordOld, int[][] logicBoard, boolean turn) {
+		boolean retVal = true;
+		
+		switch (logicBoard[xCoordOld][yCoordOld]) {
+			case 1:
+			case 7:
+				Pawn myPawn = new Pawn(xCoordOld, yCoordOld, true, !turn, false);
+				
+				for (int i = 0; i < 8; i++) {
+					for (int j = 0; j < 8; j++) {
+						
+						myPawn.xCoordNew = j;
+						myPawn.yCoordNew = i;
+						
+						if (myPawn.Move(logicBoard, !turn)) {
+							
+							if (turn) {
+								if (logicBoard[j][i] == 6) {
+									retVal = true;
+								}
+							} else {
+								if (logicBoard[j][i] == 12) {
+									retVal = true;
+								}
+							}
+							
+						}
+					}
+				}
+				
+				retVal = false;
+				
+				break;
+			case 2:
+			case 8:
+				Knight myKnight = new Knight(xCoordOld, yCoordOld, !turn, false);
+				
+				for (int i = 0; i < 8; i++) {
+					for (int j = 0; j < 8; j++) {
+						
+						myKnight.xCoordNew = j;
+						myKnight.yCoordNew = i;
+						
+						if (myKnight.Move(logicBoard, !turn)) {
+							
+							if (turn) {
+								if (logicBoard[j][i] == 6) {
+									retVal = true;
+								}
+							} else {
+								if (logicBoard[j][i] == 12) {
+									retVal = true;
+								}
+							}
+							
+						}
+					}
+				}
+				
+				retVal = false;
+				
+				break;
+			case 3:
+			case 9:
+				Bishop myBishop = new Bishop(xCoordOld, yCoordOld, !turn, false);
+				
+				for (int i = 0; i < 8; i++) {
+					for (int j = 0; j < 8; j++) {
+						
+						myBishop.xCoordNew = j;
+						myBishop.yCoordNew = i;
+						
+						if (myBishop.Move(logicBoard, !turn)) {
+							
+							if (turn) {
+								if (logicBoard[j][i] == 6) {
+									retVal = true;
+								}
+							} else {
+								if (logicBoard[j][i] == 12) {
+									retVal = true;
+								}
+							}
+							
+						}
+					}
+				}
+				
+				retVal = false;
+				
+				break;
+			case 4:
+			case 10:
+				Rook myRook = new Rook(xCoordOld, yCoordOld, !turn, false);
+				
+				for (int i = 0; i < 8; i++) {
+					for (int j = 0; j < 8; j++) {
+						
+						myRook.xCoordNew = j;
+						myRook.yCoordNew = i;
+						
+						if (myRook.Move(logicBoard, !turn)) {
+							
+							if (turn) {
+								if (logicBoard[j][i] == 6) {
+									retVal = true;
+								}
+							} else {
+								if (logicBoard[j][i] == 12) {
+									retVal = true;
+								}
+							}
+							
+						}
+					}
+				}
+				
+				retVal = false;
+				
+				break;
+			case 5:
+			case 11:
+				Queen myQueen = new Queen(xCoordOld, yCoordOld, !turn, false);
+				
+				for (int i = 0; i < 8; i++) {
+					for (int j = 0; j < 8; j++) {
+						
+						myQueen.xCoordNew = j;
+						myQueen.yCoordNew = i;
+						
+						if (myQueen.Move(logicBoard, !turn)) {
+							
+							if (turn) {
+								if (logicBoard[j][i] == 6) {
+									retVal = true;
+								}
+							} else {
+								if (logicBoard[j][i] == 12) {
+									retVal = true;
+								}
+							}
+							
+						}
+					}
+				}
+				
+				retVal = false;
+				
+				break;
+			case 6:
+			case 12:
+				King myKing = new King(xCoordOld, yCoordOld, !turn, false);
+				
+				for (int i = 0; i < 8; i++) {
+					for (int j = 0; j < 8; j++) {
+						
+						myKing.xCoordNew = j;
+						myKing.yCoordNew = i;
+						
+						if (myKing.Move(logicBoard, !turn)) {
+							
+							if (turn) {
+								if (logicBoard[j][i] == 6) {
+									retVal = true;
+								}
+							} else {
+								if (logicBoard[j][i] == 12) {
+									retVal = true;
+								}
+							}
+							
+						}
+					}
+				}
+				
+				retVal = false;
+				
+				break;
+			default:
+				retVal = false;
+			
+				break;
+		}
+		
+		if (retVal) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }

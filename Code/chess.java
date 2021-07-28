@@ -833,7 +833,6 @@ public class chess extends Application {
 											
 											if (myKing.Move(logicBoard.logicBoard, Game.turn)) {
 												Game.possibilityBoard[j][i] = true;
-												Game.pane.getChildren().add(Game.squareSelect[j][i]);
 												System.out.println("X: " + j + " Y: " + i);
 											} else {
 												Game.possibilityBoard[j][i] = false;
