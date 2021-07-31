@@ -445,7 +445,7 @@ public class chess extends Application {
 					switch (logicBoard.logicBoard[x][y]) {
 						case 1:
 						case 7:
-							Pawn myPawn = new Pawn(x, y, Game.arrayLogic[x][y].firstMove, Game.arrayLogic[x][y].colour, false);
+							Pawn myPawn = new Pawn(x, y, Game.arrayLogic[x][y].firstMove, Game.arrayLogic[x][y].colour, true);
 							Game.imageXOffset = 0.092;
 							Game.imageYOffset = 0.07;
 							
@@ -465,10 +465,12 @@ public class chess extends Application {
 								}
 							}
 							
+							Game.printBoard(logicBoard.logicBoard);
+							
 							break;
 						case 2:
 						case 8:
-							Knight myKnight = new Knight(x, y, Game.arrayLogic[x][y].colour, false);
+							Knight myKnight = new Knight(x, y, Game.arrayLogic[x][y].colour, true);
 							Game.imageXOffset = 0.082;
 							Game.imageYOffset = 0.02;
 	
@@ -491,7 +493,7 @@ public class chess extends Application {
 							break;
 						case 3:
 						case 9:
-							Bishop myBishop = new Bishop(x, y, Game.arrayLogic[x][y].colour, false);
+							Bishop myBishop = new Bishop(x, y, Game.arrayLogic[x][y].colour, true);
 							Game.imageXOffset = 0.082;
 							Game.imageYOffset = 0.02;
 	
@@ -514,7 +516,7 @@ public class chess extends Application {
 							break;
 						case 4:
 						case 10:
-							Rook myRook = new Rook(x, y, Game.arrayLogic[x][y].colour, false);
+							Rook myRook = new Rook(x, y, Game.arrayLogic[x][y].colour, true);
 							Game.imageXOffset = 0.1;
 							Game.imageYOffset = 0.06;
 							
@@ -537,7 +539,7 @@ public class chess extends Application {
 							break;
 						case 5:
 						case 11:
-							Queen myQueen = new Queen(x, y, Game.arrayLogic[x][y].colour, false);
+							Queen myQueen = new Queen(x, y, Game.arrayLogic[x][y].colour, true);
 							Game.imageXOffset = 0.092;
 							Game.imageYOffset = 0.03;
 							
@@ -560,7 +562,7 @@ public class chess extends Application {
 							break;
 						case 6:
 						case 12:
-							King myKing = new King(x, y, Game.arrayLogic[x][y].colour, false);
+							King myKing = new King(x, y, Game.arrayLogic[x][y].colour, true);
 							Game.imageXOffset = 0.092;
 							Game.imageYOffset = 0.03;
 							
@@ -626,239 +628,20 @@ public class chess extends Application {
 						
 						if (canMove) {
 							Game.pane.getChildren().remove(Game.visualCheck);
-							
-							switch (logicBoard.logicBoard[xint][yint]) {
-								case 1:
-								case 7:
-									Pawn myPawn = new Pawn(xint, yint, Game.arrayLogic[xint][yint].firstMove, Game.arrayLogic[x][y].colour, false);
-									
-									for (int i = 0; i < 8; i++) {
-										for (int j = 0; j < 8; j++) {
-											
-											myPawn.xCoordNew = j;
-											myPawn.yCoordNew = i;
-											
-											if (myPawn.Move(logicBoard.logicBoard, Game.turn)) {
-												Game.possibilityBoard[j][i] = true;
-												
-												if (Game.arrayLogic[xint][yint].colour) {
-													if (Game.possibilityBoard[j][i] && logicBoard.logicBoard[j][i] == 12) {
-														Game.isCheck = true;
-														
-														checkX = j;
-														checkY = i;
-													}
-												} else {
-													if (Game.possibilityBoard[j][i] && logicBoard.logicBoard[j][i] == 6) {
-														Game.isCheck = true;
-														
-														checkX = j;
-														checkY = i;
-													}
-												}
-												
-											} else {
-												Game.possibilityBoard[j][i] = false;
-											}
-										}
-									}
-									
-									break;
-								case 2:
-								case 8:
-									Knight myKnight = new Knight(xint, yint, Game.arrayLogic[xint][yint].colour, false);
-			
-									for (int i = 0; i < 8; i++) {
-										for (int j = 0; j < 8; j++) {
-											
-											myKnight.xCoordNew = j;
-											myKnight.yCoordNew = i;
-											
-											if (myKnight.Move(logicBoard.logicBoard, Game.turn)) {
-												Game.possibilityBoard[j][i] = true;
-												
-												if (Game.arrayLogic[xint][yint].colour) {
-													if (Game.possibilityBoard[j][i] && logicBoard.logicBoard[j][i] == 12) {
-														Game.isCheck = true;
-														
-														checkX = j;
-														checkY = i;
-													}
-												} else {
-													if (Game.possibilityBoard[j][i] && logicBoard.logicBoard[j][i] == 6) {
-														Game.isCheck = true;
-														
-														checkX = j;
-														checkY = i;
-													}
-												}
-												
-											} else {
-												Game.possibilityBoard[j][i] = false;
-											}
-										}
-									}
-									
-									break;
-								case 3:
-								case 9:
-									Bishop myBishop = new Bishop(xint, yint, Game.arrayLogic[xint][yint].colour, false);
-			
-									for (int i = 0; i < 8; i++) {
-										for (int j = 0; j < 8; j++) {
-											
-											myBishop.xCoordNew = j;
-											myBishop.yCoordNew = i;
-											
-											if (myBishop.Move(logicBoard.logicBoard, Game.turn)) {
-												Game.possibilityBoard[j][i] = true;
-												
-												if (Game.arrayLogic[xint][yint].colour) {
-													if (Game.possibilityBoard[j][i] && logicBoard.logicBoard[j][i] == 12) {
-														Game.isCheck = true;
-														
-														checkX = j;
-														checkY = i;
-													}
-												} else {
-													if (Game.possibilityBoard[j][i] && logicBoard.logicBoard[j][i] == 6) {
-														Game.isCheck = true;
-														
-														checkX = j;
-														checkY = i;
-													}
-												}
-												
-											} else {
-												Game.possibilityBoard[j][i] = false;
-											}
-										}
-									}
-									
-									break;
-								case 4:
-								case 10:
-									Rook myRook = new Rook(xint, yint, Game.arrayLogic[xint][yint].colour, false);
-									
-									for (int i = 0; i < 8; i++) {
-										for (int j = 0; j < 8; j++) {
-											
-											myRook.xCoordNew = j;
-											myRook.yCoordNew = i;
-											
-											if (myRook.Move(logicBoard.logicBoard, Game.turn)) {
-												Game.possibilityBoard[j][i] = true;
-												
-												if (Game.arrayLogic[xint][yint].colour) {
-													if (Game.possibilityBoard[j][i] && logicBoard.logicBoard[j][i] == 12) {
-														Game.isCheck = true;
-														
-														checkX = j;
-														checkY = i;
-													}
-												} else {
-													if (Game.possibilityBoard[j][i] && logicBoard.logicBoard[j][i] == 6) {
-														Game.isCheck = true;
-														
-														checkX = j;
-														checkY = i;
-													}
-												}
-												
-											} else {
-												Game.possibilityBoard[j][i] = false;
-											}
-										}
-									}
-									
-									break;
-								case 5:
-								case 11:
-									Queen myQueen = new Queen(xint, yint, Game.arrayLogic[xint][yint].colour, false);
-									
-									System.out.println("Colour: " + myQueen.colour);
-									System.out.println("Turn: " + Game.turn);
-									
-									for (int i = 0; i < 8; i++) {
-										for (int j = 0; j < 8; j++) {
-														
-											myQueen.xCoordNew = j;
-											myQueen.yCoordNew = i;
-											
-											//System.out.println("OldX: " + myQueen.xCoordOld);
-											//System.out.println("OldY: " + myQueen.yCoordOld);
-											//System.out.println("NewX: " + myQueen.xCoordNew);
-											//System.out.println("NewY: " + myQueen.yCoordNew);
-											
-											
-											if (myQueen.Move(logicBoard.logicBoard, Game.turn)) {
-												Game.possibilityBoard[j][i] = true;
-												System.out.println("Check check");
-												if (Game.arrayLogic[xint][yint].colour) {
-													
-													System.out.println("White");
-													
-													if (Game.possibilityBoard[j][i] && logicBoard.logicBoard[j][i] == 12) {
-														Game.isCheck = true;
-														
-														checkX = j;
-														checkY = i;
-													}
-												} else {
-													System.out.println("Black");
-													if (Game.possibilityBoard[j][i] && logicBoard.logicBoard[j][i] == 6) {
-														Game.isCheck = true;
-														
-														checkX = j;
-														checkY = i;
-													}
-												}
-												
-											} else {
-												Game.possibilityBoard[j][i] = false;
-											}
-										}
-									}						
-									
-									break;
-								case 6:
-								case 12:
-									King myKing = new King(x, y, Game.arrayLogic[x][y].colour, false);
-									
-									for (int i = 0; i < 8; i++) {
-										for (int j = 0; j < 8; j++) {
-											
-											myKing.xCoordNew = j;
-											myKing.yCoordNew = i;
-											
-											if (myKing.Move(logicBoard.logicBoard, Game.turn)) {
-												Game.possibilityBoard[j][i] = true;
-												System.out.println("X: " + j + " Y: " + i);
-											} else {
-												Game.possibilityBoard[j][i] = false;
-											}
-										}
-									}						
-									
-									break;
-								default:
-									break;
-							}
-							
 							Game.turn = !Game.turn;
-						}
-						
-						
-						if (Game.isCheck) {
-							Game.imagePos(Game.visualCheck, checkX, checkY, 0.0005 * squareSize, 0.0005 * squareSize, 1.1 * squareSize, 1.1 * squareSize);
-							Game.pane.getChildren().remove(Game.pieceGraphicsMaster[checkX][checkY]);
-							Game.pane.getChildren().add(Game.visualCheck);
-							Game.pane.getChildren().add(Game.pieceGraphicsMaster[checkX][checkY]);
-							System.out.println("Ayo you in check");
-							Game.isCheck = false;
-						}
-						
-						
+							
+							checkHandler checkHandler = new checkHandler();
+							boolean checkDetect = checkHandler.isKingInCheck(Game.turn, logicBoard.logicBoard);
+							
+							if (checkDetect) {
+								Game.imagePos(Game.visualCheck, checkHandler.kingX, checkHandler.kingY, 0.0005 * squareSize, 0.0005 * squareSize, 1.1 * squareSize, 1.1 * squareSize);
+								Game.pane.getChildren().remove(Game.pieceGraphicsMaster[checkHandler.kingX][checkHandler.kingY]);
+								Game.pane.getChildren().add(Game.visualCheck);
+								Game.pane.getChildren().add(Game.pieceGraphicsMaster[checkHandler.kingX][checkHandler.kingY]);
+								System.out.println("Ayo you in check");
+								Game.isCheck = false;
+							}
+						}	
 					}
 				}
 			}
@@ -871,6 +654,8 @@ public class chess extends Application {
 				
 				int x = selector.xSelect;
 				int y = selector.ySelect;
+				
+				//Game.printBoard(logicBoard.logicBoard);
 				
 				if (x > -1 && x < 8 && y > -1 && y < 8) {
 					if (logicBoard.logicBoard[selector.xSelect][selector.ySelect] > 0) {

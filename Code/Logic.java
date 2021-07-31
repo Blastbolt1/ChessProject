@@ -51,7 +51,7 @@ class Piece {
 	boolean firstMove;
 	boolean colour;
 	boolean isCaptured;
-	
+	boolean isCheckImportant;
 	
 	
 	public boolean Lines() {
@@ -101,7 +101,7 @@ class Piece {
 		}
 	}
 	
-	public boolean canMove(int xOld, int xNew, int yOld, int yNew, int[][] squares, boolean colour, boolean turn) {
+	public boolean canMove(int xOld, int xNew, int yOld, int yNew, int[][] squares, boolean colour, boolean turn, boolean isCheckImportant) {
 		
 		xCoordOld = xOld;
 		xCoordNew = xNew;
@@ -112,110 +112,134 @@ class Piece {
 		int yDifference = yCoordNew - yCoordOld;
 		
 		if (colour == turn) {
-			if (xCoordNew >= 0 && xCoordNew <= 7 && yCoordNew >= 0 && yCoordNew <= 7) {
-				if (xCoordNew == xCoordOld && yCoordNew == yCoordOld) {
-					return false;
-				} else {
-					if (xDifference == 0) {
-						if (yDifference > 0) {
-							for (int i = yCoordOld + 1; i <= yCoordNew; i++) {
-								
-								if (i < yCoordNew) {
-									if (squares[xCoordOld][i] != 0) {
-										return false;
-									}
-								} else {
-									return colourOnSquare(colour, squares, xCoordOld, i);
-								}
-									
-							}
-						} else {
-							for (int i = yCoordOld - 1; i >= yCoordNew; i--) {
-								if (i > yCoordNew) {
-									if (squares[xCoordOld][i] != 0) {
-										return false;
-									}
-								} else {
-									return colourOnSquare(colour, squares, xCoordOld, i);
-								}
-							}
-						}
-					} else if (yDifference == 0) {
-						if (xDifference > 0) {
-							for (int i = xCoordOld + 1; i <= xCoordNew; i++) {
-								
-								if (i < xCoordNew) {
-									if (squares[i][yCoordOld] != 0) {
-										//System.out.println("movement error");
-										return false;
-									}
-								} else {
-									return colourOnSquare(colour, squares, i, yCoordOld);
-								}
-									
-							}
-						} else {
-							for (int i = xCoordOld - 1; i >= xCoordNew; i--) {
-								if (i > xCoordNew) {
-									if (squares[i][yCoordOld] != 0) {
-										return false;
-									}
-								} else {
-									return colourOnSquare(colour, squares, i, yCoordOld);
-								}
-							}
-						}
-					} else if (Math.abs(xDifference) == Math.abs(yDifference)) {
-						if (xDifference > 0) {
+			boolean checkRetVal = true;
+			
+			if (isCheckImportant) {
+				int[][] testBoard = new int[8][8];
+			
+				for (int y = 0; y < 8; y++) {
+					for (int x = 0; x < 8; x++) {
+						testBoard[x][y] = squares[x][y];
+					}
+				}
+				
+				testBoard[xCoordNew][yCoordNew] = testBoard[xCoordOld][yCoordOld];
+				testBoard[xCoordOld][yCoordOld] = 0;
+				
+				checkHandler checkHandler = new checkHandler();
+				
+				checkRetVal = checkHandler.isKingInCheck(turn, testBoard);
+			}
+			
+			
+			if (!checkRetVal) {
+				if (xCoordNew >= 0 && xCoordNew <= 7 && yCoordNew >= 0 && yCoordNew <= 7) {
+					if (xCoordNew == xCoordOld && yCoordNew == yCoordOld) {
+						return false;
+					} else {
+						if (xDifference == 0) {
 							if (yDifference > 0) {
-								for (int i = 1; i <= xDifference; i++) {
-									if (i < xDifference) {
-										if (squares[xCoordOld + i][yCoordOld + i] != 0) {
-											return false;
-										}
-									} else {
-										return colourOnSquare(colour, squares, xCoordOld + i, yCoordOld + i);
-									}	
-								}
-							} else {
-								for (int i = 1; i <= xDifference; i++) {
-									if (i < xDifference) {
-										if (squares[xCoordOld + i][yCoordOld - i] != 0) {
-											return false;
-										}
-									} else {
-										return colourOnSquare(colour, squares, xCoordOld + i, yCoordOld - i);
-									}
+								for (int i = yCoordOld + 1; i <= yCoordNew; i++) {
 									
-								}
-							}
-						} else {
-							if (yDifference < 0) {
-								for (int i = -1; i >= xDifference; i--) {
-									if (i > xDifference) {
-										if (squares[xCoordOld + i][yCoordOld + i] != 0) {
+									if (i < yCoordNew) {
+										if (squares[xCoordOld][i] != 0) {
 											return false;
 										}
 									} else {
-										return colourOnSquare(colour, squares, xCoordOld + i, yCoordOld + i);
+										return colourOnSquare(colour, squares, xCoordOld, i);
 									}
-	
+										
 								}
 							} else {
-								for (int i = -1; i >= xDifference; i--) {
-									if (i > xDifference) {
-										if (squares[xCoordOld + i][yCoordOld - i] != 0) {
+								for (int i = yCoordOld - 1; i >= yCoordNew; i--) {
+									if (i > yCoordNew) {
+										if (squares[xCoordOld][i] != 0) {
 											return false;
 										}
 									} else {
-										return colourOnSquare(colour, squares, xCoordOld + i, yCoordOld - i);
+										return colourOnSquare(colour, squares, xCoordOld, i);
 									}
 								}
 							}
+						} else if (yDifference == 0) {
+							if (xDifference > 0) {
+								for (int i = xCoordOld + 1; i <= xCoordNew; i++) {
+									
+									if (i < xCoordNew) {
+										if (squares[i][yCoordOld] != 0) {
+											//System.out.println("movement error");
+											return false;
+										}
+									} else {
+										return colourOnSquare(colour, squares, i, yCoordOld);
+									}
+										
+								}
+							} else {
+								for (int i = xCoordOld - 1; i >= xCoordNew; i--) {
+									if (i > xCoordNew) {
+										if (squares[i][yCoordOld] != 0) {
+											return false;
+										}
+									} else {
+										return colourOnSquare(colour, squares, i, yCoordOld);
+									}
+								}
+							}
+						} else if (Math.abs(xDifference) == Math.abs(yDifference)) {
+							if (xDifference > 0) {
+								if (yDifference > 0) {
+									for (int i = 1; i <= xDifference; i++) {
+										if (i < xDifference) {
+											if (squares[xCoordOld + i][yCoordOld + i] != 0) {
+												return false;
+											}
+										} else {
+											return colourOnSquare(colour, squares, xCoordOld + i, yCoordOld + i);
+										}	
+									}
+								} else {
+									for (int i = 1; i <= xDifference; i++) {
+										if (i < xDifference) {
+											if (squares[xCoordOld + i][yCoordOld - i] != 0) {
+												return false;
+											}
+										} else {
+											return colourOnSquare(colour, squares, xCoordOld + i, yCoordOld - i);
+										}
+										
+									}
+								}
+							} else {
+								if (yDifference < 0) {
+									for (int i = -1; i >= xDifference; i--) {
+										if (i > xDifference) {
+											if (squares[xCoordOld + i][yCoordOld + i] != 0) {
+												return false;
+											}
+										} else {
+											return colourOnSquare(colour, squares, xCoordOld + i, yCoordOld + i);
+										}
+		
+									}
+								} else {
+									for (int i = -1; i >= xDifference; i--) {
+										if (i > xDifference) {
+											if (squares[xCoordOld + i][yCoordOld - i] != 0) {
+												return false;
+											}
+										} else {
+											return colourOnSquare(colour, squares, xCoordOld + i, yCoordOld - i);
+										}
+									}
+								}
+							}
+							return true;
 						}
 						return true;
 					}
-					return true;
+				} else {
+					return false;
 				}
 			} else {
 				return false;
@@ -244,12 +268,12 @@ class Pawn extends Piece {
 	//boolean firstMove;
 	//boolean isCaptured;
 	
-	public Pawn(int xCoordOld, int yCoordOld, boolean firstMove, boolean colour, boolean isCaptured) {
+	public Pawn(int xCoordOld, int yCoordOld, boolean firstMove, boolean colour, boolean isCheckImportant) {
 		this.xCoordOld = xCoordOld;
 		this.yCoordOld = yCoordOld;
 		this.firstMove = firstMove;
 		this.colour = colour;
-		this.isCaptured = isCaptured;
+		this.isCheckImportant = isCheckImportant;
 	}
 	
 	public boolean Move(int[][] squares, boolean turn) {
@@ -257,7 +281,7 @@ class Pawn extends Piece {
 		//System.out.println("Old Coordinates: X = " + this.xCoordOld + ", Y = " + this.yCoordOld);
 		//System.out.println("New Coordinates: X = " + this.xCoordNew + ", Y = " + this.yCoordNew);
 		
-		if (canMove(xCoordOld, xCoordNew, yCoordOld, yCoordNew, squares, this.colour, turn)) {
+		if (canMove(xCoordOld, xCoordNew, yCoordOld, yCoordNew, squares, this.colour, turn, this.isCheckImportant)) {
 			//System.out.println("general pawn true");
 			if (this.colour) {
 				if (xCoordNew == xCoordOld + 1 || xCoordNew == xCoordOld - 1) {
@@ -352,16 +376,16 @@ class Knight extends Piece {
 	//boolean colour;
 	//boolean isCaptured;
 	
-	public Knight(int xCoordOld, int yCoordOld, boolean colour, boolean isCaptured) {
+	public Knight(int xCoordOld, int yCoordOld, boolean colour, boolean isCheckImportant) {
 		this.xCoordOld = xCoordOld;
 		this.yCoordOld = yCoordOld;
 		this.colour = colour;
-		this.isCaptured = isCaptured;
+		this.isCheckImportant = isCheckImportant;
 	}
 	
 	public boolean Move(int[][] squares, boolean turn) {
 		
-		if (canMove(xCoordOld, xCoordNew, yCoordOld, yCoordNew, squares, this.colour, turn)) {
+		if (canMove(xCoordOld, xCoordNew, yCoordOld, yCoordNew, squares, this.colour, turn, this.isCheckImportant)) {
 			int xDif = Math.abs(xCoordNew - xCoordOld);
 			int yDif = Math.abs(yCoordNew - yCoordOld);
 			
@@ -396,15 +420,15 @@ class Bishop extends Piece {
 	//boolean colour;
 	//boolean isCaptured;
 	
-	public Bishop(int xCoordOld, int yCoordOld, boolean colour, boolean isCaptured) {
+	public Bishop(int xCoordOld, int yCoordOld, boolean colour, boolean isCheckImportant) {
 		this.xCoordOld = xCoordOld;
 		this.yCoordOld = yCoordOld;
 		this.colour = colour;
-		this.isCaptured = isCaptured;
+		this.isCheckImportant = isCheckImportant;
 	}
 	
 	public boolean Move(int[][] squares, boolean turn) {
-		if (canMove(xCoordOld, xCoordNew, yCoordOld, yCoordNew, squares, this.colour, turn)) {
+		if (canMove(xCoordOld, xCoordNew, yCoordOld, yCoordNew, squares, this.colour, turn, this.isCheckImportant)) {
 			if (Diagonals()) {
 				return true;
 			} else {
@@ -425,15 +449,15 @@ class Rook extends Piece {
 	boolean colour;
 	boolean isCaptured;
 	
-	public Rook(int xCoordOld, int yCoordOld, boolean colour, boolean isCaptured) {
+	public Rook(int xCoordOld, int yCoordOld, boolean colour, boolean isCheckImportant) {
 		this.xCoordOld = xCoordOld;
 		this.yCoordOld = yCoordOld;
 		this.colour = colour;
-		this.isCaptured = isCaptured;
+		this.isCheckImportant = isCheckImportant;
 	}
 	
 	public boolean Move(int[][] squares, boolean turn) {
-		if (canMove(xCoordOld, xCoordNew, yCoordOld, yCoordNew, squares, this.colour, turn)) {
+		if (canMove(xCoordOld, xCoordNew, yCoordOld, yCoordNew, squares, this.colour, turn, this.isCheckImportant)) {
 			if (Lines()) {
 				return true;
 			} else {
@@ -454,15 +478,15 @@ class Queen extends Piece {
 	//boolean colour;
 	//boolean isCaptured;
 	
-	public Queen(int xCoordOld, int yCoordOld, boolean colour, boolean isCaptured) {
+	public Queen(int xCoordOld, int yCoordOld, boolean colour, boolean isCheckImportant) {
 		this.xCoordOld = xCoordOld;
 		this.yCoordOld = yCoordOld;
 		this.colour = colour;
-		this.isCaptured = isCaptured;
+		this.isCheckImportant = isCheckImportant;
 	}
 	
 	public boolean Move(int[][] squares, boolean turn) {
-		if (canMove(xCoordOld, xCoordNew, yCoordOld, yCoordNew, squares, this.colour, turn)) {
+		if (canMove(xCoordOld, xCoordNew, yCoordOld, yCoordNew, squares, this.colour, turn, this.isCheckImportant)) {
 			if (Lines() || Diagonals()) {
 				return true;
 			} else {
@@ -485,15 +509,15 @@ class King extends Piece {
 	//boolean colour;
 	//boolean isCaptured;
 	
-	public King(int xCoordOld, int yCoordOld, boolean colour, boolean isCaptured) {
+	public King(int xCoordOld, int yCoordOld, boolean colour, boolean isCheckImportant) {
 		this.xCoordOld = xCoordOld;
 		this.yCoordOld = yCoordOld;
 		this.colour = colour;
-		this.isCaptured = isCaptured;
+		this.isCheckImportant = isCheckImportant;
 	}
 	
 	public boolean Move(int[][] squares, boolean turn) {
-		if (canMove(xCoordOld, xCoordNew, yCoordOld, yCoordNew, squares, this.colour, turn)) {
+		if (canMove(xCoordOld, xCoordNew, yCoordOld, yCoordNew, squares, this.colour, turn, this.isCheckImportant)) {
 			if (Lines() || Diagonals()) {
 				int xDif = Math.abs(xCoordNew - xCoordOld);
 				int yDif = Math.abs(yCoordNew - yCoordOld);
@@ -549,6 +573,8 @@ class selectPiece {
 
 class checkHandler {
 	boolean isCheck;
+	int kingX;
+	int kingY;
 	
 	public boolean isPieceChecking(int piece, int xCoordOld, int yCoordOld, int[][] logicBoard, boolean turn) {
 		boolean retVal = true;
@@ -569,10 +595,16 @@ class checkHandler {
 							if (turn) {
 								if (logicBoard[j][i] == 6) {
 									retVal = true;
+									
+									this.kingX = j;
+									this.kingY = i;
 								}
 							} else {
 								if (logicBoard[j][i] == 12) {
 									retVal = true;
+									
+									this.kingX = j;
+									this.kingY = i;
 								}
 							}
 							
@@ -597,11 +629,17 @@ class checkHandler {
 							
 							if (turn) {
 								if (logicBoard[j][i] == 6) {
+									this.kingX = j;
+									this.kingY = i;
+									
 									retVal = true;
 								}
 							} else {
 								if (logicBoard[j][i] == 12) {
 									retVal = true;
+									
+									this.kingX = j;
+									this.kingY = i;
 								}
 							}
 							
@@ -627,10 +665,16 @@ class checkHandler {
 							if (turn) {
 								if (logicBoard[j][i] == 6) {
 									retVal = true;
+									
+									this.kingX = j;
+									this.kingY = i;
 								}
 							} else {
 								if (logicBoard[j][i] == 12) {
 									retVal = true;
+									
+									this.kingX = j;
+									this.kingY = i;
 								}
 							}
 							
@@ -656,10 +700,16 @@ class checkHandler {
 							if (turn) {
 								if (logicBoard[j][i] == 6) {
 									retVal = true;
+									
+									this.kingX = j;
+									this.kingY = i;
 								}
 							} else {
 								if (logicBoard[j][i] == 12) {
 									retVal = true;
+									
+									this.kingX = j;
+									this.kingY = i;
 								}
 							}
 							
@@ -685,10 +735,16 @@ class checkHandler {
 							if (turn) {
 								if (logicBoard[j][i] == 6) {
 									retVal = true;
+									
+									this.kingX = j;
+									this.kingY = i;
 								}
 							} else {
 								if (logicBoard[j][i] == 12) {
 									retVal = true;
+									
+									this.kingX = j;
+									this.kingY = i;
 								}
 							}
 							
@@ -714,10 +770,16 @@ class checkHandler {
 							if (turn) {
 								if (logicBoard[j][i] == 6) {
 									retVal = true;
+									
+									this.kingX = j;
+									this.kingY = i;
 								}
 							} else {
 								if (logicBoard[j][i] == 12) {
 									retVal = true;
+									
+									this.kingX = j;
+									this.kingY = i;
 								}
 							}
 							
@@ -734,10 +796,36 @@ class checkHandler {
 				break;
 		}
 		
-		if (retVal) {
-			return true;
-		} else {
-			return false;
+		return retVal;
+	}
+	
+	public boolean isKingInCheck(boolean turn, int[][] logicBoard) {
+		boolean retVal;
+		
+		for (int y = 0; y < 8; y++) {
+			for (int x = 0; x < 8; x++) {
+				int pieceCheck = logicBoard[x][y];
+				
+				if (turn) {
+					if (pieceCheck > 6) {
+						retVal = isPieceChecking(pieceCheck, x, y, logicBoard, turn);
+						
+						if (retVal) {
+							return true;
+						}
+					}
+				} else {
+					if (pieceCheck != 0 && pieceCheck < 7) {
+						retVal = isPieceChecking(pieceCheck, x, y, logicBoard, turn);
+						
+						if (retVal) {
+							return true;
+						}
+					}
+				}
+			}
 		}
+		
+		return false;
 	}
 }
