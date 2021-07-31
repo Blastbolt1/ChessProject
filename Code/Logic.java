@@ -112,7 +112,8 @@ class Piece {
 		int yDifference = yCoordNew - yCoordOld;
 		
 		if (colour == turn) {
-			boolean checkRetVal = true;
+			boolean checkRetVal = false;
+			checkHandler checkHandler = new checkHandler();
 			
 			if (isCheckImportant) {
 				int[][] testBoard = new int[8][8];
@@ -124,13 +125,11 @@ class Piece {
 				}
 				
 				testBoard[xCoordNew][yCoordNew] = testBoard[xCoordOld][yCoordOld];
-				testBoard[xCoordOld][yCoordOld] = 0;
+				testBoard[xCoordOld][yCoordOld] = 0;	
 				
-				checkHandler checkHandler = new checkHandler();
-				
-				checkRetVal = checkHandler.isKingInCheck(turn, testBoard);
+				//checkRetVal = checkHandler.isKingInCheck(turn, testBoard);
+				checkRetVal = checkHandler.isPinned(turn, testBoard);
 			}
-			
 			
 			if (!checkRetVal) {
 				if (xCoordNew >= 0 && xCoordNew <= 7 && yCoordNew >= 0 && yCoordNew <= 7) {
@@ -577,9 +576,9 @@ class checkHandler {
 	int kingY;
 	
 	public boolean isPieceChecking(int piece, int xCoordOld, int yCoordOld, int[][] logicBoard, boolean turn) {
-		boolean retVal = true;
+		boolean retVal = false;
 		
-		switch (logicBoard[xCoordOld][yCoordOld]) {
+		switch (piece) {
 			case 1:
 			case 7:
 				Pawn myPawn = new Pawn(xCoordOld, yCoordOld, true, !turn, false);
@@ -611,8 +610,6 @@ class checkHandler {
 						}
 					}
 				}
-				
-				retVal = false;
 				
 				break;
 			case 2:
@@ -647,8 +644,6 @@ class checkHandler {
 					}
 				}
 				
-				retVal = false;
-				
 				break;
 			case 3:
 			case 9:
@@ -659,6 +654,7 @@ class checkHandler {
 						
 						myBishop.xCoordNew = j;
 						myBishop.yCoordNew = i;
+						
 						
 						if (myBishop.Move(logicBoard, !turn)) {
 							
@@ -671,6 +667,8 @@ class checkHandler {
 								}
 							} else {
 								if (logicBoard[j][i] == 12) {
+									System.out.println("Bishop HIT The King");
+									
 									retVal = true;
 									
 									this.kingX = j;
@@ -681,8 +679,6 @@ class checkHandler {
 						}
 					}
 				}
-				
-				retVal = false;
 				
 				break;
 			case 4:
@@ -717,8 +713,6 @@ class checkHandler {
 					}
 				}
 				
-				retVal = false;
-				
 				break;
 			case 5:
 			case 11:
@@ -751,8 +745,6 @@ class checkHandler {
 						}
 					}
 				}
-				
-				retVal = false;
 				
 				break;
 			case 6:
@@ -787,8 +779,6 @@ class checkHandler {
 					}
 				}
 				
-				retVal = false;
-				
 				break;
 			default:
 				retVal = false;
@@ -800,11 +790,17 @@ class checkHandler {
 	}
 	
 	public boolean isKingInCheck(boolean turn, int[][] logicBoard) {
-		boolean retVal;
-		
+		boolean retVal = true;
+		System.out.println("isKingInCheck method called");
 		for (int y = 0; y < 8; y++) {
 			for (int x = 0; x < 8; x++) {
 				int pieceCheck = logicBoard[x][y];
+				
+				if (pieceCheck == 3 || pieceCheck == 9) {
+					System.out.println("Piece selected is " + pieceCheck);
+				}
+				
+				//System.out.println("X: " + x + " Y: " + y);
 				
 				if (turn) {
 					if (pieceCheck > 6) {
@@ -816,6 +812,36 @@ class checkHandler {
 					}
 				} else {
 					if (pieceCheck != 0 && pieceCheck < 7) {
+						retVal = isPieceChecking(pieceCheck, x, y, logicBoard, turn);
+						
+						if (retVal) {
+							return true;
+						}
+					}
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+	public boolean isPinned(boolean turn, int[][] logicBoard) {
+		boolean retVal = true;
+		
+		for (int y = 0; y < 8; y++) {
+			for (int x = 0; x < 8; x++) {
+				int pieceCheck = logicBoard[x][y];
+				
+				if (turn) {
+					if (pieceCheck == 9 || pieceCheck == 10 || pieceCheck == 11) {
+						retVal = isPieceChecking(pieceCheck, x, y, logicBoard, turn);
+						
+						if (retVal) {
+							return true;
+						}
+					}
+				} else {
+					if (pieceCheck == 3 || pieceCheck == 4 || pieceCheck == 5) {
 						retVal = isPieceChecking(pieceCheck, x, y, logicBoard, turn);
 						
 						if (retVal) {

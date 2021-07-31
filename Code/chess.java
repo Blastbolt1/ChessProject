@@ -627,13 +627,14 @@ public class chess extends Application {
 						Game.movePiece(canMove, Game.pieceGraphicsMaster[x][y], Game.arrayLogic[x][y], logicBoard.logicBoard, xint, yint, logicBoard.logicBoard[x][y], Game.imageXOffset, Game.imageYOffset);
 						
 						if (canMove) {
+							
 							Game.pane.getChildren().remove(Game.visualCheck);
 							Game.turn = !Game.turn;
 							
 							checkHandler checkHandler = new checkHandler();
-							boolean checkDetect = checkHandler.isKingInCheck(Game.turn, logicBoard.logicBoard);
+							//boolean checkDetect = checkHandler.isKingInCheck(Game.turn, logicBoard.logicBoard);
 							
-							if (checkDetect) {
+							if (checkHandler.isKingInCheck(Game.turn, logicBoard.logicBoard)) {
 								Game.imagePos(Game.visualCheck, checkHandler.kingX, checkHandler.kingY, 0.0005 * squareSize, 0.0005 * squareSize, 1.1 * squareSize, 1.1 * squareSize);
 								Game.pane.getChildren().remove(Game.pieceGraphicsMaster[checkHandler.kingX][checkHandler.kingY]);
 								Game.pane.getChildren().add(Game.visualCheck);
