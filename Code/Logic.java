@@ -52,7 +52,7 @@ class Piece {
 	boolean colour;
 	boolean isCaptured;
 	boolean isCheckImportant;
-	
+	boolean isKing;
 	
 	public boolean Lines() {
 		if (xCoordNew == xCoordOld) {
@@ -101,7 +101,7 @@ class Piece {
 		}
 	}
 	
-	public boolean canMove(int xOld, int xNew, int yOld, int yNew, int[][] squares, boolean colour, boolean turn, boolean isCheckImportant) {
+	public boolean canMove(int xOld, int xNew, int yOld, int yNew, int[][] squares, boolean colour, boolean turn, boolean isCheckImportant, boolean isKing) {
 		
 		xCoordOld = xOld;
 		xCoordNew = xNew;
@@ -128,7 +128,7 @@ class Piece {
 				testBoard[xCoordOld][yCoordOld] = 0;	
 				
 				//checkRetVal = checkHandler.isKingInCheck(turn, testBoard);
-				checkRetVal = checkHandler.isPinned(turn, testBoard);
+				checkRetVal = checkHandler.isPinned(turn, testBoard, isKing);
 			}
 			
 			if (!checkRetVal) {
@@ -280,7 +280,7 @@ class Pawn extends Piece {
 		//System.out.println("Old Coordinates: X = " + this.xCoordOld + ", Y = " + this.yCoordOld);
 		//System.out.println("New Coordinates: X = " + this.xCoordNew + ", Y = " + this.yCoordNew);
 		
-		if (canMove(xCoordOld, xCoordNew, yCoordOld, yCoordNew, squares, this.colour, turn, this.isCheckImportant)) {
+		if (canMove(xCoordOld, xCoordNew, yCoordOld, yCoordNew, squares, this.colour, turn, this.isCheckImportant, false)) {
 			//System.out.println("general pawn true");
 			if (this.colour) {
 				if (xCoordNew == xCoordOld + 1 || xCoordNew == xCoordOld - 1) {
@@ -384,7 +384,7 @@ class Knight extends Piece {
 	
 	public boolean Move(int[][] squares, boolean turn) {
 		
-		if (canMove(xCoordOld, xCoordNew, yCoordOld, yCoordNew, squares, this.colour, turn, this.isCheckImportant)) {
+		if (canMove(xCoordOld, xCoordNew, yCoordOld, yCoordNew, squares, this.colour, turn, this.isCheckImportant, false)) {
 			int xDif = Math.abs(xCoordNew - xCoordOld);
 			int yDif = Math.abs(yCoordNew - yCoordOld);
 			
@@ -427,7 +427,7 @@ class Bishop extends Piece {
 	}
 	
 	public boolean Move(int[][] squares, boolean turn) {
-		if (canMove(xCoordOld, xCoordNew, yCoordOld, yCoordNew, squares, this.colour, turn, this.isCheckImportant)) {
+		if (canMove(xCoordOld, xCoordNew, yCoordOld, yCoordNew, squares, this.colour, turn, this.isCheckImportant, false)) {
 			if (Diagonals()) {
 				return true;
 			} else {
@@ -456,7 +456,7 @@ class Rook extends Piece {
 	}
 	
 	public boolean Move(int[][] squares, boolean turn) {
-		if (canMove(xCoordOld, xCoordNew, yCoordOld, yCoordNew, squares, this.colour, turn, this.isCheckImportant)) {
+		if (canMove(xCoordOld, xCoordNew, yCoordOld, yCoordNew, squares, this.colour, turn, this.isCheckImportant, false)) {
 			if (Lines()) {
 				return true;
 			} else {
@@ -485,7 +485,7 @@ class Queen extends Piece {
 	}
 	
 	public boolean Move(int[][] squares, boolean turn) {
-		if (canMove(xCoordOld, xCoordNew, yCoordOld, yCoordNew, squares, this.colour, turn, this.isCheckImportant)) {
+		if (canMove(xCoordOld, xCoordNew, yCoordOld, yCoordNew, squares, this.colour, turn, this.isCheckImportant, false)) {
 			if (Lines() || Diagonals()) {
 				return true;
 			} else {
@@ -507,16 +507,18 @@ class King extends Piece {
 	int yCoordNew;*/
 	//boolean colour;
 	//boolean isCaptured;
+	boolean isKing;
 	
 	public King(int xCoordOld, int yCoordOld, boolean colour, boolean isCheckImportant) {
 		this.xCoordOld = xCoordOld;
 		this.yCoordOld = yCoordOld;
 		this.colour = colour;
 		this.isCheckImportant = isCheckImportant;
+		this.isKing = true;
 	}
 	
 	public boolean Move(int[][] squares, boolean turn) {
-		if (canMove(xCoordOld, xCoordNew, yCoordOld, yCoordNew, squares, this.colour, turn, this.isCheckImportant)) {
+		if (canMove(xCoordOld, xCoordNew, yCoordOld, yCoordNew, squares, this.colour, turn, this.isCheckImportant, isKing)) {
 			if (Lines() || Diagonals()) {
 				int xDif = Math.abs(xCoordNew - xCoordOld);
 				int yDif = Math.abs(yCoordNew - yCoordOld);
@@ -825,7 +827,7 @@ class checkHandler {
 		return false;
 	}
 	
-	public boolean isPinned(boolean turn, int[][] logicBoard) {
+	public boolean isPinned(boolean turn, int[][] logicBoard, boolean isKing) {
 		boolean retVal = true;
 		
 		for (int y = 0; y < 8; y++) {
@@ -833,19 +835,42 @@ class checkHandler {
 				int pieceCheck = logicBoard[x][y];
 				
 				if (turn) {
-					if (pieceCheck == 9 || pieceCheck == 10 || pieceCheck == 11) {
-						retVal = isPieceChecking(pieceCheck, x, y, logicBoard, turn);
+					if (isKing) {
+						if (pieceCheck > 6) {
+							retVal = isPieceChecking(pieceCheck, x, y, logicBoard, turn);
+							
+							if (retVal) {
+								return true;
+							}
+						}
 						
-						if (retVal) {
-							return true;
+					} else {
+						if (pieceCheck > 6 && pieceCheck < 12) {
+							retVal = isPieceChecking(pieceCheck, x, y, logicBoard, turn);
+							
+							if (retVal) {
+								return true;
+							}
 						}
 					}
+					
 				} else {
-					if (pieceCheck == 3 || pieceCheck == 4 || pieceCheck == 5) {
-						retVal = isPieceChecking(pieceCheck, x, y, logicBoard, turn);
+					if (isKing) {
+						if (pieceCheck < 7) {
+							retVal = isPieceChecking(pieceCheck, x, y, logicBoard, turn);
+							
+							if (retVal) {
+								return true;
+							}
+						}
 						
-						if (retVal) {
-							return true;
+					} else {
+						if (pieceCheck < 6) {
+							retVal = isPieceChecking(pieceCheck, x, y, logicBoard, turn);
+							
+							if (retVal) {
+								return true;
+							}
 						}
 					}
 				}
