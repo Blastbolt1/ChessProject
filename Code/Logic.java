@@ -189,11 +189,11 @@ class Game {
 						this.pieceGraphicsMaster[j][i] = new ImageView(WhiteRook);
 						imagePos(this.pieceGraphicsMaster[j][i], j, i, 0.1, 0.06, squareSize, 1.185 * squareSize);
 						
-						this.pieceLogic.rooks[rookTrack] = new Rook(j, i, true, false);
+						this.pieceLogic.rooks[rookTrack] = new Rook(j, i, true, false, true);
 						rookTrack++;
 						imageTrack++;
 						
-						this.arrayLogic[j][i] = new Rook(j, i, true, false);
+						this.arrayLogic[j][i] = new Rook(j, i, true, false, true);
 						
 						break;               
 					case 5:                  
@@ -211,11 +211,12 @@ class Game {
 						this.pieceGraphicsMaster[j][i] = new ImageView(WhiteKing);
 						imagePos(this.pieceGraphicsMaster[j][i], j, i, 0.092, 0.03, squareSize, 1.185 * squareSize);
 						
-						this.pieceLogic.kings[kingTrack] = new King(j, i, true, false);
+						this.pieceLogic.kings[kingTrack] = new King(j, i, true, false, true);
 						kingTrack++;
 						imageTrack++;
 						
-						this.arrayLogic[j][i] = new King(j, i, true, false);
+						this.arrayLogic[j][i] = new King(j, i, true, false, true);
+						System.out.println("King is on first move: " + this.arrayLogic[4][7].firstMove);
 						
 						break;               
 					case 7:                  
@@ -255,11 +256,11 @@ class Game {
 						this.pieceGraphicsMaster[j][i] = new ImageView(BlackRook);
 						imagePos(this.pieceGraphicsMaster[j][i], j, i, 0.1, 0.06, squareSize, 1.185 * squareSize);
 						
-						this.pieceLogic.rooks[rookTrack] = new Rook(j, i, false, false);
+						this.pieceLogic.rooks[rookTrack] = new Rook(j, i, false, false, true);
 						rookTrack++;
 						imageTrack++;
 						
-						this.arrayLogic[j][i] = new Rook(j, i, false, false);
+						this.arrayLogic[j][i] = new Rook(j, i, false, false, true);
 						
 						break;               
 					case 11:                 
@@ -277,11 +278,11 @@ class Game {
 						this.pieceGraphicsMaster[j][i] = new ImageView(BlackKing);
 						imagePos(this.pieceGraphicsMaster[j][i], j, i, 0.092, 0.03, squareSize, 1.185 * squareSize);
 						
-						this.pieceLogic.kings[kingTrack] = new King(j, i, false, false);
+						this.pieceLogic.kings[kingTrack] = new King(j, i, false, false, true);
 						kingTrack++;
 						imageTrack++;
 						
-						this.arrayLogic[j][i] = new King(j, i, false, false);
+						this.arrayLogic[j][i] = new King(j, i, false, false, true);
 						
 						break;
 					default:
@@ -293,7 +294,7 @@ class Game {
 		}
 	}
 	
-	public void movePiece(boolean moveCheck, ImageView graphic, Piece pieceSelect, int[][] board, double xAxis, double yAxis, int newSquare, double xOff, double yOff) {
+	public void movePiece(boolean moveCheck, ImageView graphic, Piece pieceSelect, int[][] board, double xAxis, double yAxis, int newSquare, double xOff, double yOff, boolean castling, int rookX, int rookY) {
 		Piece logic = pieceSelect;
 		
 		if (moveCheck) {
@@ -343,11 +344,57 @@ class Game {
 					this.arrayLogic[logic.xCoordOld][logic.yCoordOld] = new Piece();
 				}
 			}
+
+			
+			if (castling) {
+				int xDif = logic.xCoordNew - logic.xCoordOld;
+				int newRookX = 0;
+				int newRookY = 0;
+				
+				if (xDif > 0) {
+					newRookX = logic.xCoordNew - 1;
+					newRookY = logic.yCoordNew;
+				} else {
+					newRookX = logic.xCoordNew + 1;
+					newRookY = logic.yCoordNew;
+				}
+				
+				System.out.println("Old Rook X: " + rookX);
+				System.out.println("Old Rook Y: " + rookY);
+				System.out.println("New Rook X: " + newRookX);
+				System.out.println("New Rook Y: " + newRookY);
+				
+				this.pieceGraphicsMaster[4][7] = this.pieceGraphicsMaster[0][3];
+				imagePos(this.pieceGraphicsMaster[4][7], 4, 7, 0.1, 0.06, squareSize, 1.185 * squareSize);
+				this.pieceGraphicsMaster[rookX][rookY] = new ImageView();
+				this.pane.getChildren().remove(this.pieceGraphicsMaster[0][7]);
+				
+				/*for (int i = 0; i < 8; i++) {
+					this.pane.getChildren().remove(this.pieceGraphicsMaster[i][7]);
+				}*/
+				
+				this.arrayLogic[newRookX][newRookY] = this.arrayLogic[rookX][rookY];
+				this.arrayLogic[rookX][rookY] = new Piece();
+				
+				board[rookX][rookY] = 0;
+				if (this.turn) {
+					board[newRookX][newRookY] = 4;
+				} else {
+					board[newRookX][newRookY] = 10;
+				}
+				board[logic.xCoordOld][logic.yCoordOld] = 0;
+				board[logic.xCoordNew][logic.yCoordNew] = newSquare;
+				
+				this.arrayLogic[newRookX][newRookY].xCoordOld = newRookX;
+				this.arrayLogic[newRookX][newRookY].yCoordOld = newRookY;
+				this.printBoard(board);
+			}
 			
 			if (isPromotion == false) {
 				this.pieceGraphicsMaster[logic.xCoordNew][logic.yCoordNew] = this.pieceGraphicsMaster[logic.xCoordOld][logic.yCoordOld];
 				this.pieceGraphicsMaster[logic.xCoordOld][logic.yCoordOld] = new ImageView();
 				this.pane.getChildren().remove(this.pieceGraphicsMaster[logic.xCoordOld][logic.yCoordOld]);
+				//this.pane.getChildren().remove(this.pieceGraphicsMaster[4][0]);
 				
 				this.arrayLogic[logic.xCoordNew][logic.yCoordNew] = this.arrayLogic[logic.xCoordOld][logic.yCoordOld];
 				this.arrayLogic[logic.xCoordOld][logic.yCoordOld] = new Piece();
@@ -357,7 +404,10 @@ class Game {
 				
 				this.arrayLogic[logic.xCoordNew][logic.yCoordNew].xCoordOld = this.arrayLogic[logic.xCoordNew][logic.yCoordNew].xCoordNew;
 				this.arrayLogic[logic.xCoordNew][logic.yCoordNew].yCoordOld = this.arrayLogic[logic.xCoordNew][logic.yCoordNew].yCoordNew;
+				this.arrayLogic[logic.xCoordNew][logic.yCoordNew].firstMove = false;
+				
 			}
+			
 		} else {
 			graphic.setX(this.xOffset - (xOff * this.squareSize) + (logic.xCoordOld * this.squareSize));
 			graphic.setY(this.yOffset - (yOff * this.squareSize) + (logic.yCoordOld * this.squareSize));
@@ -373,9 +423,10 @@ class Game {
 		}
 	}
 	
-	public boolean isRookFirstMove(int CoordID) {
+	public int[] getRookCoords(int CoordID) {
 		int x = 0;
 		int y = 0;
+		int[] vector = new int[2];
 		
 		switch (CoordID) {
 			case 1:
@@ -398,9 +449,22 @@ class Game {
 				break;
 		}
 		
+		vector[0] = x;
+		vector[1] = y;
+		
+		return vector;
+	}
+	
+	public boolean isRookFirstMove(int x, int y)
+	{
+		
+		//System.out.println("Rook is on its first move? " + this.arrayLogic[x][y].firstMove);
+		
 		if (this.arrayLogic[x][y].firstMove) {
+			//System.out.println("Rook has not moved");
 			return true;
 		} else {
+			//System.out.println("Rook has moved");
 			return false;
 		}
 	}
@@ -443,6 +507,23 @@ class Board {
 			logicBoard[i][1] = 7;
 			logicBoard[i][6] = 1;
 		}
+		
+		logicBoard[4][6] = 0;
+		logicBoard[4][4] = 1;
+		logicBoard[4][3] = 7;
+		logicBoard[4][1] = 0;
+		logicBoard[6][7] = 0;
+		logicBoard[5][5] = 2;
+		logicBoard[6][0] = 0;
+		logicBoard[5][2] = 8;
+		logicBoard[5][7] = 0;
+		logicBoard[2][4] = 3;
+		logicBoard[1][0] = 0;
+		logicBoard[2][2] = 8;
+		
+		logicBoard[1][7] = 0;
+		logicBoard[2][7] = 0;
+		//logicBoard[3][7] = 0;
 	}
 }
 
@@ -849,14 +930,15 @@ class Rook extends Piece {
 	int yCoordOld;
 	int xCoordNew;
 	int yCoordNew;*/
-	boolean colour;
-	boolean isCaptured;
+	//boolean colour;
+	//boolean isCaptured;
 	
-	public Rook(int xCoordOld, int yCoordOld, boolean colour, boolean isCheckImportant) {
+	public Rook(int xCoordOld, int yCoordOld, boolean colour, boolean isCheckImportant, boolean firstMove) {
 		this.xCoordOld = xCoordOld;
 		this.yCoordOld = yCoordOld;
 		this.colour = colour;
 		this.isCheckImportant = isCheckImportant;
+		this.firstMove = firstMove;
 	}
 	
 	public boolean Move(int[][] squares, boolean turn) {
@@ -913,11 +995,12 @@ class King extends Piece {
 	//boolean isCaptured;
 	//boolean isKing;
 	
-	public King(int xCoordOld, int yCoordOld, boolean colour, boolean isCheckImportant) {
+	public King(int xCoordOld, int yCoordOld, boolean colour, boolean isCheckImportant, boolean firstMove) {
 		this.xCoordOld = xCoordOld;
 		this.yCoordOld = yCoordOld;
 		this.colour = colour;
 		this.isCheckImportant = isCheckImportant;
+		this.firstMove = firstMove;
 		this.isKing = true;
 	}
 	
@@ -926,26 +1009,31 @@ class King extends Piece {
 		int yDif = Math.abs(yCoordNew - yCoordOld);
 		
 		if (canMove(xCoordOld, xCoordNew, yCoordOld, yCoordNew, squares, this.colour, turn, this.isCheckImportant, isKing)) {
+			boolean retVal = false;
+			
 			if (Lines() || Diagonals()) {	
 		
 				if (xDif == 1 || yDif == 1) {
-					return true;
+					retVal = true;
 					
 				} else {
-					return false;
+					retVal = false;
 				}
-			} else {
-				return false;
 			}
-		} else if (xDif == 2) {
-			return canCastle(squares, isRookFirstMove);
+			
+			if (xDif == 2 && yDif == 0) {
+				System.out.println("Castle is allowed");
+				retVal = canCastle(squares, isRookFirstMove);
+			}
+			
+			return retVal;
 		} else {
 			return false;
 		}
 	}
 	
-	public int targetRookCastle() {
-		int xMove = this.xCoordNew - this.xCoordOld;
+	public int targetRookCastle(int oldX, int newX) {
+		int xMove = newX - oldX;
 		int rookX = 0;
 		int rookY = 0;
 		int retVal = 0;
@@ -968,14 +1056,14 @@ class King extends Piece {
 			
 		} else if (xMove == -2) {
 			rookX = 0;
-			retVal += 0;
+			retVal += 1;
 			
 			if (this.colour) {
 				rookY = 7;
-				retVal += 3;
+				retVal += 2;
 			} else {
 				rookY = 0;
-				retVal += 1;
+				retVal += 0;
 			}
 		}
 		
@@ -997,16 +1085,27 @@ class King extends Piece {
 		
 		for (int i = this.xCoordOld; iterations <= 2; i += increment, iterations++) {
 			int select = 0;
+			int[][] testBoard = new int[8][8];
+			
+			for (int y = 0; y < 8; y++) {
+				for (int x = 0; x < 8; x++) {
+					testBoard[x][y] = board[x][y];
+				}
+			}
 			
 			for (int y = 0; y < 8; y++) {
 				for (int x = 0; x < 8; x++) {
 					if (this.colour) {
-						if (board[x][y] > 6) {
+						if (testBoard[x][y] > 6) {
 							select = board[x][y];
+						} else {
+							select = 0;
 						}
 					} else {
-						if (board[x][y] < 7 && board[x][y] != 0) {
+						if (testBoard[x][y] < 7 && testBoard[x][y] != 0) {
 							select = board[x][y];
+						} else {
+							select = 0;
 						}
 					}
 					
@@ -1019,6 +1118,7 @@ class King extends Piece {
 							myPawn.yCoordNew = this.yCoordOld;
 									
 							if (myPawn.Move(board, !this.colour)) {
+								System.out.println("Pawn attack!");
 								return false;
 							}
 							
@@ -1031,7 +1131,7 @@ class King extends Piece {
 							myKnight.yCoordNew = this.yCoordOld;
 									
 							if (myKnight.Move(board, !this.colour)) {
-								return true;
+								return false;
 							}
 							
 							break;
@@ -1043,19 +1143,19 @@ class King extends Piece {
 							myBishop.yCoordNew = this.yCoordOld;
 									
 							if (myBishop.Move(board, !this.colour)) {
-								return true;
+								return false;
 							}
 							
 							break;
 						case 4:
 						case 10:
-							Rook myRook = new Rook(x, y, !this.colour, false);
+							Rook myRook = new Rook(x, y, !this.colour, false, true);
 	
 							myRook.xCoordNew = i;
 							myRook.yCoordNew = this.yCoordOld;
 									
 							if (myRook.Move(board, !this.colour)) {
-								return true;
+								return false;
 							}
 							
 							break;
@@ -1067,19 +1167,19 @@ class King extends Piece {
 							myQueen.yCoordNew = this.yCoordOld;
 									
 							if (myQueen.Move(board, !this.colour)) {
-								return true;
+								return false;
 							}
 							
 							break;
 						case 6:
 						case 12:
-							King myKing = new King(x, y, !this.colour, false);
+							King myKing = new King(x, y, !this.colour, false, true);
 	
 							myKing.xCoordNew = i;
 							myKing.yCoordNew = this.yCoordOld;
 									
 							if (myKing.Move(board, !this.colour, false)) {
-								return true;
+								return false;
 							}
 							
 							break;
@@ -1088,23 +1188,22 @@ class King extends Piece {
 					}
 				}
 			}
-			
+			/*
 			if (i != this.xCoordOld) {
 				if (board[i][this.yCoordOld] > 0) {
 					return false;
 				}
-			}
+			}*/
 		}
 		
 		return true;
 	}
 	
 	public boolean canCastle(int[][] logicBoard, boolean isRookFirstMove) {
-		
 		if (this.firstMove) {
-			System.out.println("King no move");
+			//System.out.println("King has not moved yet");
 			if (isRookFirstMove) {
-				System.out.println("Rook no move");
+				//System.out.println("Rook has not moved yet");
 				if (canCastleSafely(logicBoard)) {
 					System.out.println("Safety");
 					return true;
@@ -1268,7 +1367,7 @@ class checkHandler {
 				break;
 			case 4:
 			case 10:
-				Rook myRook = new Rook(xCoordOld, yCoordOld, !turn, false);
+				Rook myRook = new Rook(xCoordOld, yCoordOld, !turn, false, true);
 				
 				for (int i = 0; i < 8; i++) {
 					for (int j = 0; j < 8; j++) {
@@ -1334,7 +1433,7 @@ class checkHandler {
 				break;
 			case 6:
 			case 12:
-				King myKing = new King(xCoordOld, yCoordOld, !turn, false);
+				King myKing = new King(xCoordOld, yCoordOld, !turn, false, true);
 				
 				for (int i = 0; i < 8; i++) {
 					for (int j = 0; j < 8; j++) {
@@ -1462,4 +1561,9 @@ class checkHandler {
 		
 		return false;
 	}
+}
+
+class rookVector {
+	int x;
+	int y;
 }

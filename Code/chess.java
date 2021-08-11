@@ -72,6 +72,8 @@ public class chess extends Application {
 		
 		selectPiece selector = new selectPiece(false);
 		
+		rookVector rookVector = new rookVector();
+		
 		myScene.setOnMousePressed(new EventHandler<MouseEvent>() {
 			public void handle(MouseEvent event) {				
 				selector.mouseX = event.getX();
@@ -86,12 +88,12 @@ public class chess extends Application {
 				int x = selector.xSelect;
 				int y = selector.ySelect;
 				
-				Game.pane.getChildren().remove(Game.pieceGraphicsMaster[x][y]);
-				Game.pane.getChildren().add(Game.pieceGraphicsMaster[x][y]);
-				
 				//System.out.println("This Piece can move to the following squares:");
 				
 				if (x > -1 && x < 8 && y > -1 && y < 8) {
+					Game.pane.getChildren().remove(Game.pieceGraphicsMaster[x][y]);
+					Game.pane.getChildren().add(Game.pieceGraphicsMaster[x][y]);
+					
 					switch (logicBoard.logicBoard[x][y]) {
 						case 1:
 						case 7:
@@ -166,7 +168,7 @@ public class chess extends Application {
 							break;
 						case 4:
 						case 10:
-							Rook myRook = new Rook(x, y, Game.arrayLogic[x][y].colour, true);
+							Rook myRook = new Rook(x, y, Game.arrayLogic[x][y].colour, true, Game.arrayLogic[x][y].firstMove);
 							Game.imageXOffset = 0.1;
 							Game.imageYOffset = 0.06;
 							
@@ -212,7 +214,7 @@ public class chess extends Application {
 							break;
 						case 6:
 						case 12:
-							King myKing = new King(x, y, Game.arrayLogic[x][y].colour, true);
+							King myKing = new King(x, y, Game.arrayLogic[x][y].colour, true, Game.arrayLogic[x][y].firstMove);
 							Game.imageXOffset = 0.092;
 							Game.imageYOffset = 0.03;
 							
@@ -222,9 +224,18 @@ public class chess extends Application {
 									myKing.xCoordNew = j;
 									myKing.yCoordNew = i;
 									
-									if (myKing.Move(logicBoard.logicBoard, Game.turn, Game.isRookFirstMove(myKing.targetRookCastle()))) {
+									int[] coords = new int[2];
+									coords = Game.getRookCoords(myKing.targetRookCastle(myKing.xCoordOld, myKing.xCoordNew));
+									//rookVector.x = coords[0];
+									//rookVector.y = coords[1];
+									
+									//System.out.println("Rook X Selected: " + rookVector.x);
+									//System.out.println("Rook Y Selected: " + rookVector.y);
+									
+									if (myKing.Move(logicBoard.logicBoard, Game.turn, Game.isRookFirstMove(coords[0], coords[1]))) {
 										Game.possibilityBoard[j][i] = true;
 										Game.pane.getChildren().add(Game.squareSelect[j][i]);
+										//Game.arrayLogic[x][y].firstMove = false;
 										//System.out.println("X: " + j + " Y: " + i);
 									} else {
 										Game.possibilityBoard[j][i] = false;
@@ -259,12 +270,34 @@ public class chess extends Application {
 						Game.arrayLogic[x][y].xCoordNew = xint;
 						Game.arrayLogic[x][y].yCoordNew = yint;
 						
+						int xDif = Math.abs(Game.arrayLogic[x][y].xCoordNew - Game.arrayLogic[x][y].xCoordOld);
+						int rookX = 0;
+						int rookY = 0;
+						boolean isCastling = false;
+						King myKing = new King(x, y, Game.arrayLogic[x][y].colour, true, Game.arrayLogic[x][y].firstMove);
+						int[] coords = new int[2];
+						
+						if (logicBoard.logicBoard[x][y] % 6 == 0 && xDif == 2) {
+							isCastling = true;
+							
+							myKing.xCoordNew = xint;
+							myKing.yCoordNew = yint;
+							
+							coords = Game.getRookCoords(myKing.targetRookCastle(myKing.xCoordOld, myKing.xCoordNew));
+							rookVector.x = coords[0];
+							rookVector.y = coords[1];
+						}
+						
 						boolean canMove = true;
 						
 						int checkX = 0;
 						int checkY = 0;
 						
-						if (Game.possibilityBoard[xint][yint] == false) {
+						if (xint > -1 && xint < 8 && yint > -1 && yint < 8) {
+							if (Game.possibilityBoard[xint][yint] == false) {
+								canMove = false;
+							}
+						} else {
 							canMove = false;
 						}
 						
@@ -274,7 +307,7 @@ public class chess extends Application {
 							}
 						}
 						
-						Game.movePiece(canMove, Game.pieceGraphicsMaster[x][y], Game.arrayLogic[x][y], logicBoard.logicBoard, xint, yint, logicBoard.logicBoard[x][y], Game.imageXOffset, Game.imageYOffset);
+						Game.movePiece(canMove, Game.pieceGraphicsMaster[x][y], Game.arrayLogic[x][y], logicBoard.logicBoard, xint, yint, logicBoard.logicBoard[x][y], Game.imageXOffset, Game.imageYOffset, isCastling, rookVector.x, rookVector.y);
 						
 						if (canMove) {
 							
