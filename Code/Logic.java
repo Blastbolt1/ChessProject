@@ -297,6 +297,9 @@ class Game {
 	public void movePiece(boolean moveCheck, ImageView graphic, Piece pieceSelect, int[][] board, double xAxis, double yAxis, int newSquare, double xOff, double yOff, boolean castling, int rookX, int rookY) {
 		Piece logic = pieceSelect;
 		
+		System.out.println("New X Before Castling: " + logic.xCoordNew);
+		System.out.println("New Y Before Castling: " + logic.yCoordNew);
+		
 		if (moveCheck) {
 			graphic.setX(this.xOffset + (xAxis * squareSize) - (xOff * squareSize));
 			graphic.setY(this.yOffset + (yAxis * squareSize) - (yOff * squareSize));
@@ -347,6 +350,8 @@ class Game {
 
 			
 			if (castling) {
+				
+				
 				int xDif = logic.xCoordNew - logic.xCoordOld;
 				int newRookX = 0;
 				int newRookY = 0;
@@ -364,14 +369,9 @@ class Game {
 				System.out.println("New Rook X: " + newRookX);
 				System.out.println("New Rook Y: " + newRookY);
 				
-				this.pieceGraphicsMaster[4][7] = this.pieceGraphicsMaster[0][3];
-				imagePos(this.pieceGraphicsMaster[4][7], 4, 7, 0.1, 0.06, squareSize, 1.185 * squareSize);
+				this.pieceGraphicsMaster[newRookX][newRookY] = this.pieceGraphicsMaster[rookX][rookY];
 				this.pieceGraphicsMaster[rookX][rookY] = new ImageView();
-				this.pane.getChildren().remove(this.pieceGraphicsMaster[0][7]);
-				
-				/*for (int i = 0; i < 8; i++) {
-					this.pane.getChildren().remove(this.pieceGraphicsMaster[i][7]);
-				}*/
+				imagePos(this.pieceGraphicsMaster[newRookX][newRookY], newRookX, newRookY, 0.1, 0.06, squareSize, 1.185 * squareSize);
 				
 				this.arrayLogic[newRookX][newRookY] = this.arrayLogic[rookX][rookY];
 				this.arrayLogic[rookX][rookY] = new Piece();
@@ -382,19 +382,21 @@ class Game {
 				} else {
 					board[newRookX][newRookY] = 10;
 				}
-				board[logic.xCoordOld][logic.yCoordOld] = 0;
-				board[logic.xCoordNew][logic.yCoordNew] = newSquare;
 				
 				this.arrayLogic[newRookX][newRookY].xCoordOld = newRookX;
 				this.arrayLogic[newRookX][newRookY].yCoordOld = newRookY;
-				this.printBoard(board);
+				//this.printBoard(board);
 			}
 			
 			if (isPromotion == false) {
+				System.out.println("Old X: " + logic.xCoordOld);
+				System.out.println("Old Y: " + logic.yCoordOld);
+				System.out.println("New X: " + logic.xCoordNew);
+				System.out.println("New Y: " + logic.yCoordNew);
+				
 				this.pieceGraphicsMaster[logic.xCoordNew][logic.yCoordNew] = this.pieceGraphicsMaster[logic.xCoordOld][logic.yCoordOld];
 				this.pieceGraphicsMaster[logic.xCoordOld][logic.yCoordOld] = new ImageView();
 				this.pane.getChildren().remove(this.pieceGraphicsMaster[logic.xCoordOld][logic.yCoordOld]);
-				//this.pane.getChildren().remove(this.pieceGraphicsMaster[4][0]);
 				
 				this.arrayLogic[logic.xCoordNew][logic.yCoordNew] = this.arrayLogic[logic.xCoordOld][logic.yCoordOld];
 				this.arrayLogic[logic.xCoordOld][logic.yCoordOld] = new Piece();
@@ -405,10 +407,11 @@ class Game {
 				this.arrayLogic[logic.xCoordNew][logic.yCoordNew].xCoordOld = this.arrayLogic[logic.xCoordNew][logic.yCoordNew].xCoordNew;
 				this.arrayLogic[logic.xCoordNew][logic.yCoordNew].yCoordOld = this.arrayLogic[logic.xCoordNew][logic.yCoordNew].yCoordNew;
 				this.arrayLogic[logic.xCoordNew][logic.yCoordNew].firstMove = false;
-				
+				this.printBoard(board);
 			}
 			
 		} else {
+			System.out.println("No Move");
 			graphic.setX(this.xOffset - (xOff * this.squareSize) + (logic.xCoordOld * this.squareSize));
 			graphic.setY(this.yOffset - (yOff * this.squareSize) + (logic.yCoordOld * this.squareSize));
 		}
@@ -472,6 +475,7 @@ class Game {
 
 class Board {
 	int[][] logicBoard;
+	int[][][] moveHistory;
 	
 	public void initState() {
 		//x, y, 0 for empty square, 1-12 for piece types/colour. 1-6 is white, 7-12 is black
@@ -484,6 +488,7 @@ class Board {
 		//add 6 to each for black pieces
 		
 		this.logicBoard = new int[8][8];
+		this.moveHistory = new int[201][8][8];
 		
 		logicBoard[0][0] = 10;
 		logicBoard[1][0] = 8;
@@ -507,7 +512,7 @@ class Board {
 			logicBoard[i][1] = 7;
 			logicBoard[i][6] = 1;
 		}
-		
+		/*
 		logicBoard[4][6] = 0;
 		logicBoard[4][4] = 1;
 		logicBoard[4][3] = 7;
@@ -523,7 +528,15 @@ class Board {
 		
 		logicBoard[1][7] = 0;
 		logicBoard[2][7] = 0;
-		//logicBoard[3][7] = 0;
+		//logicBoard[3][7] = 0;*/
+	}
+	
+	public void updateMoveHistory(int moveNum) {
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				this.moveHistory[moveNum][j][i] = this.logicBoard[j][i];
+			}
+		}
 	}
 }
 
@@ -1072,18 +1085,22 @@ class King extends Piece {
 	
 	public boolean canCastleSafely(int[][] board) {
 		int increment = 0;
-		int iterations = 0;
+		int index = 0;
+		int iterations = 2;
 		int xMove = this.xCoordNew - this.xCoordOld;
 		
 		if (xMove > 0) {
 			increment = 1;
 		} else {
 			increment = -1;
+			if (board[1][this.yCoordOld] > 0) {
+				return false;
+			}
 		}
 		
 		int limit = this.xCoordOld + 2;
 		
-		for (int i = this.xCoordOld; iterations <= 2; i += increment, iterations++) {
+		for (int i = this.xCoordOld; index <= iterations; i += increment, index++) {
 			int select = 0;
 			int[][] testBoard = new int[8][8];
 			

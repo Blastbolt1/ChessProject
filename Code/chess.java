@@ -270,6 +270,9 @@ public class chess extends Application {
 						Game.arrayLogic[x][y].xCoordNew = xint;
 						Game.arrayLogic[x][y].yCoordNew = yint;
 						
+						//System.out.println("X New is " + Game.arrayLogic[x][y].xCoordNew);
+						//System.out.println("Y New is " + Game.arrayLogic[x][y].yCoordNew);
+						
 						int xDif = Math.abs(Game.arrayLogic[x][y].xCoordNew - Game.arrayLogic[x][y].xCoordOld);
 						int rookX = 0;
 						int rookY = 0;
