@@ -23,7 +23,6 @@ import javafx.scene.shape.Circle;
 import javafx.stage.Stage; 
 
 // Main class
-
 public class chess extends Application {
 	public static void main (String[] args) {
 		
@@ -45,6 +44,7 @@ public class chess extends Application {
 		Game Game = new Game(xOffset, yOffset, squareSize, pane, true);
 		Game.initBoard();
 		Game.initGame(logicBoard.logicBoard);
+		logicBoard.updateMoveHistory(Game.moveNum);
 		
 		myStage.setResizable(true);
 
@@ -107,7 +107,7 @@ public class chess extends Application {
 									myPawn.xCoordNew = j;
 									myPawn.yCoordNew = i;
 									
-									if (myPawn.Move(logicBoard.logicBoard, Game.turn)) {
+									if (myPawn.Move(logicBoard.logicBoard, Game.turn, logicBoard.moveHistory, Game.moveNum)) {
 										Game.possibilityBoard[j][i] = true;
 										Game.pane.getChildren().add(Game.squareSelect[j][i]);
 										//System.out.println("X: " + j + " Y: " + i);
@@ -132,7 +132,7 @@ public class chess extends Application {
 									myKnight.xCoordNew = j;
 									myKnight.yCoordNew = i;
 									
-									if (myKnight.Move(logicBoard.logicBoard, Game.turn)) {
+									if (myKnight.Move(logicBoard.logicBoard, Game.turn, logicBoard.moveHistory, Game.moveNum)) {
 										Game.possibilityBoard[j][i] = true;
 										Game.pane.getChildren().add(Game.squareSelect[j][i]);
 										//System.out.println("X: " + j + " Y: " + i);
@@ -155,7 +155,7 @@ public class chess extends Application {
 									myBishop.xCoordNew = j;
 									myBishop.yCoordNew = i;
 									
-									if (myBishop.Move(logicBoard.logicBoard, Game.turn)) {
+									if (myBishop.Move(logicBoard.logicBoard, Game.turn, logicBoard.moveHistory, Game.moveNum)) {
 										Game.possibilityBoard[j][i] = true;
 										Game.pane.getChildren().add(Game.squareSelect[j][i]);
 										//System.out.println("X: " + j + " Y: " + i);
@@ -178,7 +178,7 @@ public class chess extends Application {
 									myRook.xCoordNew = j;
 									myRook.yCoordNew = i;
 									
-									if (myRook.Move(logicBoard.logicBoard, Game.turn)) {
+									if (myRook.Move(logicBoard.logicBoard, Game.turn, logicBoard.moveHistory, Game.moveNum)) {
 										Game.possibilityBoard[j][i] = true;
 										Game.pane.getChildren().add(Game.squareSelect[j][i]);
 										//System.out.println("X: " + j + " Y: " + i);
@@ -201,7 +201,7 @@ public class chess extends Application {
 									myQueen.xCoordNew = j;
 									myQueen.yCoordNew = i;
 									
-									if (myQueen.Move(logicBoard.logicBoard, Game.turn)) {
+									if (myQueen.Move(logicBoard.logicBoard, Game.turn, logicBoard.moveHistory, Game.moveNum)) {
 										Game.possibilityBoard[j][i] = true;
 										Game.pane.getChildren().add(Game.squareSelect[j][i]);
 										//System.out.println("X: " + j + " Y: " + i);
@@ -232,7 +232,7 @@ public class chess extends Application {
 									//System.out.println("Rook X Selected: " + rookVector.x);
 									//System.out.println("Rook Y Selected: " + rookVector.y);
 									
-									if (myKing.Move(logicBoard.logicBoard, Game.turn, Game.isRookFirstMove(coords[0], coords[1]))) {
+									if (myKing.Move(logicBoard.logicBoard, Game.turn, Game.isRookFirstMove(coords[0], coords[1]), logicBoard.moveHistory, Game.moveNum)) {
 										Game.possibilityBoard[j][i] = true;
 										Game.pane.getChildren().add(Game.squareSelect[j][i]);
 										//Game.arrayLogic[x][y].firstMove = false;
@@ -316,11 +316,12 @@ public class chess extends Application {
 							
 							Game.pane.getChildren().remove(Game.visualCheck);
 							Game.turn = !Game.turn;
-							
+							Game.moveNum++;
+							logicBoard.updateMoveHistory(Game.moveNum);
 							checkHandler checkHandler = new checkHandler();
 							//boolean checkDetect = checkHandler.isKingInCheck(Game.turn, logicBoard.logicBoard);
 							
-							if (checkHandler.isKingInCheck(Game.turn, logicBoard.logicBoard)) {
+							if (checkHandler.isKingInCheck(Game.turn, logicBoard.logicBoard, logicBoard.moveHistory, Game.moveNum)) {
 								Game.imagePos(Game.visualCheck, checkHandler.kingX, checkHandler.kingY, 0.0005 * squareSize, 0.0005 * squareSize, 1.1 * squareSize, 1.1 * squareSize);
 								Game.pane.getChildren().remove(Game.pieceGraphicsMaster[checkHandler.kingX][checkHandler.kingY]);
 								Game.pane.getChildren().add(Game.visualCheck);
