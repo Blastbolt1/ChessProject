@@ -158,7 +158,7 @@ class Game {
 						this.pieceGraphicsMaster[j][i] = new ImageView(WhitePawn);
 						imagePos(this.pieceGraphicsMaster[j][i], j, i, 0.092, 0.07, squareSize, 1.185 * squareSize);
 						
-						this.pieceLogic.pawns[pawnTrack] = new Pawn(j, i, true, true, false);
+						//this.pieceLogic.pawns[pawnTrack] = new Pawn(j, i, true, true, false);
 						pawnTrack++;
 						imageTrack++;
 						
@@ -169,7 +169,7 @@ class Game {
 						this.pieceGraphicsMaster[j][i] = new ImageView(WhiteKnight);
 						imagePos(this.pieceGraphicsMaster[j][i], j, i, 0.082, 0.02, squareSize, 1.185 * squareSize);
 						
-						this.pieceLogic.knights[knightTrack] = new Knight(j, i, true, false);
+						//this.pieceLogic.knights[knightTrack] = new Knight(j, i, true, false);
 						knightTrack++;
 						imageTrack++;
 						
@@ -180,7 +180,7 @@ class Game {
 						this.pieceGraphicsMaster[j][i] = new ImageView(WhiteBishop);
 						imagePos(this.pieceGraphicsMaster[j][i], j, i, 0.082, 0.02, squareSize, 1.185 * squareSize);
 						
-						this.pieceLogic.bishops[bishopTrack] = new Bishop(j, i, true, false);
+						//this.pieceLogic.bishops[bishopTrack] = new Bishop(j, i, true, false);
 						bishopTrack++;
 						imageTrack++;
 						
@@ -191,7 +191,7 @@ class Game {
 						this.pieceGraphicsMaster[j][i] = new ImageView(WhiteRook);
 						imagePos(this.pieceGraphicsMaster[j][i], j, i, 0.1, 0.06, squareSize, 1.185 * squareSize);
 						
-						this.pieceLogic.rooks[rookTrack] = new Rook(j, i, true, false, true);
+						//this.pieceLogic.rooks[rookTrack] = new Rook(j, i, true, false, true);
 						rookTrack++;
 						imageTrack++;
 						
@@ -202,7 +202,7 @@ class Game {
 						this.pieceGraphicsMaster[j][i] = new ImageView(WhiteQueen);
 						imagePos(this.pieceGraphicsMaster[j][i], j, i, 0.092, 0.03, squareSize, 1.185 * squareSize);
 						
-						this.pieceLogic.queens[queenTrack] = new Queen(j, i, true, false);
+						//this.pieceLogic.queens[queenTrack] = new Queen(j, i, true, false);
 						queenTrack++;
 						imageTrack++;
 						
@@ -213,7 +213,7 @@ class Game {
 						this.pieceGraphicsMaster[j][i] = new ImageView(WhiteKing);
 						imagePos(this.pieceGraphicsMaster[j][i], j, i, 0.092, 0.03, squareSize, 1.185 * squareSize);
 						
-						this.pieceLogic.kings[kingTrack] = new King(j, i, true, false, true);
+						//this.pieceLogic.kings[kingTrack] = new King(j, i, true, false, true);
 						kingTrack++;
 						imageTrack++;
 						
@@ -225,7 +225,7 @@ class Game {
 						this.pieceGraphicsMaster[j][i] = new ImageView(BlackPawn);
 						imagePos(this.pieceGraphicsMaster[j][i], j, i, 0.092, 0.07, squareSize, 1.185 * squareSize);
 
-						this.pieceLogic.pawns[pawnTrack] = new Pawn(j, i, true, false, false);
+						//this.pieceLogic.pawns[pawnTrack] = new Pawn(j, i, true, false, false);
 						pawnTrack++;
 						imageTrack++;
 						
@@ -236,7 +236,7 @@ class Game {
 						this.pieceGraphicsMaster[j][i] = new ImageView(BlackKnight);
 						imagePos(this.pieceGraphicsMaster[j][i], j, i, 0.082, 0.02, squareSize, 1.185 * squareSize);
 						
-						this.pieceLogic.knights[knightTrack] = new Knight(j, i, false, false);
+						//this.pieceLogic.knights[knightTrack] = new Knight(j, i, false, false);
 						knightTrack++;
 						imageTrack++;
 						
@@ -247,7 +247,7 @@ class Game {
 						this.pieceGraphicsMaster[j][i] = new ImageView(BlackBishop);
 						imagePos(this.pieceGraphicsMaster[j][i], j, i, 0.082, 0.02, squareSize, 1.185 * squareSize);
 						
-						this.pieceLogic.bishops[bishopTrack] = new Bishop(j, i, false, false);
+						//this.pieceLogic.bishops[bishopTrack] = new Bishop(j, i, false, false);
 						bishopTrack++;
 						imageTrack++;
 						
@@ -258,7 +258,7 @@ class Game {
 						this.pieceGraphicsMaster[j][i] = new ImageView(BlackRook);
 						imagePos(this.pieceGraphicsMaster[j][i], j, i, 0.1, 0.06, squareSize, 1.185 * squareSize);
 						
-						this.pieceLogic.rooks[rookTrack] = new Rook(j, i, false, false, true);
+						//this.pieceLogic.rooks[rookTrack] = new Rook(j, i, false, false, true);
 						rookTrack++;
 						imageTrack++;
 						
@@ -269,7 +269,7 @@ class Game {
 						this.pieceGraphicsMaster[j][i] = new ImageView(BlackQueen);
 						imagePos(this.pieceGraphicsMaster[j][i], j, i, 0.092, 0.03, squareSize, 1.185 * squareSize);
 						
-						this.pieceLogic.queens[queenTrack] = new Queen(j, i, false, false);
+						//this.pieceLogic.queens[queenTrack] = new Queen(j, i, false, false);
 						queenTrack++;
 						imageTrack++;
 						
@@ -280,7 +280,7 @@ class Game {
 						this.pieceGraphicsMaster[j][i] = new ImageView(BlackKing);
 						imagePos(this.pieceGraphicsMaster[j][i], j, i, 0.092, 0.03, squareSize, 1.185 * squareSize);
 						
-						this.pieceLogic.kings[kingTrack] = new King(j, i, false, false, true);
+						//this.pieceLogic.kings[kingTrack] = new King(j, i, false, false, true);
 						kingTrack++;
 						imageTrack++;
 						
@@ -320,8 +320,7 @@ class Game {
 			if (board[logic.xCoordOld][logic.yCoordOld] == 1 || board[logic.xCoordOld][logic.yCoordOld] == 7) {
 				Pawn testPawn = new Pawn(logic.xCoordNew, logic.yCoordNew, logic.firstMove, logic.colour, false);
 				
-				if ((logic.xCoordNew - logic.xCoordOld != 0) && board[logic.xCoordNew][logic.yCoordNew] == 0) {
-					System.out.println("The French call it In Passing");
+				if ((logic.xCoordNew - logic.xCoordOld != 0) && (board[logic.xCoordNew][logic.yCoordNew] == 0)) {
 					int removeX = 0;
 					int removeY = 0;
 					
@@ -547,7 +546,14 @@ class Board {
 		
 		logicBoard[1][7] = 0;
 		logicBoard[2][7] = 0;
-		//logicBoard[3][7] = 0;*/
+		logicBoard[3][7] = 0;*/
+		
+		/*logicBoard[3][0] = 0;
+		logicBoard[7][0] = 0;
+		logicBoard[1][6] = 0;
+		logicBoard[7][2] = 10;
+		logicBoard[3][6] = 0;
+		logicBoard[1][4] = 1;*/
 	}
 	
 	public void updateMoveHistory(int moveNum) {
@@ -642,8 +648,35 @@ class Piece {
 					}
 				}
 				
+				
+				if (testBoard[xCoordOld][yCoordOld] == 1 || testBoard[xCoordOld][yCoordOld] == 7) {
+					if ((xCoordNew - xCoordOld != 0) && (testBoard[xCoordNew][yCoordNew] == 0)) {
+						int xPassant = xCoordNew;
+						int yPassant = 0;
+						boolean canPassant = true;
+						
+						if (colour) {
+							if (yCoordNew == 2) {
+								yPassant = yCoordNew + 1;
+							} else {
+								canPassant = false;
+							}
+						} else {
+							if (yCoordNew == 5) {
+								yPassant = yCoordNew - 1;
+							} else {
+								canPassant = false;
+							}
+						}
+						
+						if (canPassant) {
+							testBoard[xPassant][yPassant] = 0;
+						}
+					}
+				}
+				
 				testBoard[xCoordNew][yCoordNew] = testBoard[xCoordOld][yCoordOld];
-				testBoard[xCoordOld][yCoordOld] = 0;	
+				testBoard[xCoordOld][yCoordOld] = 0;
 				
 				//checkRetVal = checkHandler.isKingInCheck(turn, testBoard);
 				checkRetVal = checkHandler.isPreventedByCheck(turn, testBoard, isKing, boardHistory, currentMove);
