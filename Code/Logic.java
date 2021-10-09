@@ -20,7 +20,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;  
 import javafx.scene.shape.Shape;
 import javafx.scene.shape.Circle;
-import javafx.stage.Stage; 
+import javafx.stage.Stage;
+import javafx.scene.text.Text;
+import javafx.scene.text.Font;  
+import javafx.scene.text.FontPosture;  
+import javafx.scene.text.FontWeight;  
 
 class Game {
 	int moveNum;
@@ -32,6 +36,7 @@ class Game {
 	boolean turn;
 	boolean isCheck;
 	boolean[][] possibilityBoard;
+	boolean promoBool;
 	Rectangle[][] chessBoard;
 	ImageView[][] pieceGraphicsMaster;
 	logicContainer pieceLogic;
@@ -52,6 +57,12 @@ class Game {
 	Image BlackKing;
 	Image CheckGraphics;
 	ImageView visualCheck;
+	ImageView[] promoPieces;
+	int promoX;
+	int promoY;
+	Text promotionText;
+	ImageView[] glow;
+	Rectangle shader;
 	
 	public Game (double xOffset, double yOffset, double squareSize, Pane pane, boolean turn) {
 		this.xOffset = xOffset;
@@ -60,6 +71,29 @@ class Game {
 		this.pane = pane;
 		this.turn = turn;
 		this.moveNum = 0;
+		this.promoBool = true;
+	}
+	
+	public void initPromo(boolean colour) {
+		promoPieces = new ImageView[4];
+		
+		if (colour) {
+			promoPieces[0] = new ImageView(WhiteKnight);
+			promoPieces[1] = new ImageView(WhiteBishop);
+			promoPieces[2] = new ImageView(WhiteRook);
+			promoPieces[3] = new ImageView(WhiteQueen);	
+
+		} else {
+			promoPieces[0] = new ImageView(BlackKnight);
+			promoPieces[1] = new ImageView(BlackBishop);
+			promoPieces[2] = new ImageView(BlackRook);
+			promoPieces[3] = new ImageView(BlackQueen);
+		}
+		
+		imagePos(promoPieces[0], 1, 3, 0, 0, squareSize * 1.4, squareSize * 1.4 * 1.185);
+		imagePos(promoPieces[1], 3, 3, 0.5, 0, squareSize * 1.4, squareSize * 1.4 * 1.185);
+		imagePos(promoPieces[2], 4, 3, 0, 0, squareSize * 1.4, squareSize * 1.4 * 1.185);
+		imagePos(promoPieces[3], 6, 3, 0.5, 0, squareSize * 1.4, squareSize * 1.4 * 1.185);
 	}
 	
 	public void initBoard() {
@@ -296,6 +330,81 @@ class Game {
 		}
 	}
 	
+	public void promote(int[][] masterBoard) {
+		promoBool = false;
+		for (int i = 0; i < 4; i++) {
+			//System.out.println("a");
+			int j = i;
+			
+			promoPieces[j].setOnMouseReleased(new EventHandler<MouseEvent>() {
+				public void handle(MouseEvent event) {
+					switch (j) {
+						case 0:	
+							if (turn) {
+								masterBoard[promoX][promoY] = 8;
+								arrayLogic[promoX][promoY] = new Knight(promoX, promoY, false, false);
+								pieceGraphicsMaster[promoX][promoY] = new ImageView(BlackKnight);
+							} else {
+								masterBoard[promoX][promoY] = 2;
+								arrayLogic[promoX][promoY] = new Knight(promoX, promoY, true, false);
+								pieceGraphicsMaster[promoX][promoY] = new ImageView(WhiteKnight);
+							}
+							
+							break;
+						case 1:
+							if (turn) {
+								masterBoard[promoX][promoY] = 9;
+								arrayLogic[promoX][promoY] = new Bishop(promoX, promoY, false, false);
+								pieceGraphicsMaster[promoX][promoY] = new ImageView(BlackBishop);
+							} else {
+								masterBoard[promoX][promoY] = 3;
+								arrayLogic[promoX][promoY] = new Bishop(promoX, promoY, true, false);
+								pieceGraphicsMaster[promoX][promoY] = new ImageView(WhiteBishop);
+							}
+							
+							break;
+						case 2:
+							if (turn) {
+								masterBoard[promoX][promoY] = 10;
+								arrayLogic[promoX][promoY] = new Rook(promoX, promoY, false, false, false);
+								pieceGraphicsMaster[promoX][promoY] = new ImageView(BlackRook);
+							} else {
+								masterBoard[promoX][promoY] = 4;
+								arrayLogic[promoX][promoY] = new Rook(promoX, promoY, true, false, false);
+								pieceGraphicsMaster[promoX][promoY] = new ImageView(WhiteRook);
+							}
+							
+							break;
+						case 3:	
+							if (turn) {
+								masterBoard[promoX][promoY] = 11;
+								arrayLogic[promoX][promoY] = new Queen(promoX, promoY, false, false);
+								pieceGraphicsMaster[promoX][promoY] = new ImageView(BlackQueen);
+							} else {
+								masterBoard[promoX][promoY] = 5;
+								arrayLogic[promoX][promoY] = new Queen(promoX, promoY, true, false);
+								pieceGraphicsMaster[promoX][promoY] = new ImageView(WhiteQueen);
+							}
+
+							break;
+					}
+					
+					imagePos(pieceGraphicsMaster[promoX][promoY], promoX, promoY, 0.082, 0.02, squareSize, 1.185 * squareSize);
+					pane.getChildren().add(pieceGraphicsMaster[promoX][promoY]);
+					
+					for (int k = 0; k < 4; k++) {
+						pane.getChildren().remove(promoPieces[k]);
+						pane.getChildren().remove(glow[k]);
+					}
+					pane.getChildren().remove(promotionText);
+					pane.getChildren().remove(shader);
+					
+					promoBool = true;
+				}
+			});
+		}
+	}
+	
 	public void movePiece(boolean moveCheck, ImageView graphic, Piece pieceSelect, int[][] board, double xAxis, double yAxis, int newSquare, double xOff, double yOff, boolean castling, int rookX, int rookY) {
 		Piece logic = pieceSelect;
 		
@@ -338,31 +447,94 @@ class Game {
 				}
 				
 				if (testPawn.isEndRank()) {
-					
+					promoControl promo = new promoControl();
+
 					isPromotion = true;
 					
 					this.pane.getChildren().remove(this.pieceGraphicsMaster[logic.xCoordOld][logic.yCoordOld]);
 					
 					board[logic.xCoordOld][logic.yCoordOld] = 0;
+					this.promoX = logic.xCoordNew;
+					this.promoY = logic.yCoordNew;
 					
+					//System.out.println("this turn is " + this.turn);
+					this.initPromo(this.turn);
+					
+					Color c = Color.rgb(55, 55, 55, 0.5);
+					shader = new Rectangle(this.xOffset, this.yOffset, 8 * squareSize, 8 * squareSize);
+					shader.setFill(c);
+					this.pane.getChildren().add(shader);
+					
+					//ImageView[] promotionSelection = new ImageView[4];
+					glow = new ImageView[4];
+					
+					for (int i = 0; i < 4; i++) {
+						glow[i] = new ImageView(CheckGraphics);
+						glow[i].setOpacity(0.75);
+					}
+					
+					promotionText = new Text(this.xOffset + 0.6 * squareSize, this.yOffset + 2.5 * squareSize, "Choose Your Fighter!");
+					promotionText.setFont(Font.font("Abyssinica SIL", FontWeight.BOLD, FontPosture.REGULAR, 70));
+					promotionText.setFill(Color.WHITE);
+					promotionText.setStroke(Color.rgb(100, 0, 0, 1.0));
+					this.pane.getChildren().add(promotionText);
+					
+					
+					/*
 					if (testPawn.colour) {
-						this.pieceGraphicsMaster[logic.xCoordNew][logic.yCoordNew] = new ImageView(WhiteQueen);
+						promotionSelection[0] = new ImageView(WhiteKnight);
+						promotionSelection[1] = new ImageView(WhiteBishop);
+						promotionSelection[2] = new ImageView(WhiteRook);
+						promotionSelection[3] = new ImageView(WhiteQueen);
 						
-						board[logic.xCoordNew][logic.yCoordNew] = 5;
-						
-						this.arrayLogic[logic.xCoordNew][logic.yCoordNew] = new Queen(logic.xCoordNew, logic.yCoordNew, true, false);
 
 					} else {
-						this.pieceGraphicsMaster[logic.xCoordNew][logic.yCoordNew] = new ImageView(BlackQueen);
-						
-						board[logic.xCoordNew][logic.yCoordNew] = 11;
-						
-						this.arrayLogic[logic.xCoordNew][logic.yCoordNew] = new Queen(logic.xCoordNew, logic.yCoordNew, false, false);
+						promotionSelection[0] = new ImageView(BlackKnight);
+						promotionSelection[1] = new ImageView(BlackBishop);
+						promotionSelection[2] = new ImageView(BlackRook);
+						promotionSelection[3] = new ImageView(BlackQueen);
 					}
-					imagePos(this.pieceGraphicsMaster[logic.xCoordNew][logic.yCoordNew], logic.xCoordNew, logic.yCoordNew, 0.092, 0.03, squareSize, 1.185 * squareSize);
-					this.pane.getChildren().add(this.pieceGraphicsMaster[logic.xCoordNew][logic.yCoordNew]);
+				
+					imagePos(promotionSelection[0], 1, 3, 0, 0, squareSize * 1.4, squareSize * 1.4 * 1.185);
+					imagePos(promotionSelection[1], 3, 3, 0.5, 0, squareSize * 1.4, squareSize * 1.4 * 1.185);
+					imagePos(promotionSelection[2], 4, 3, 0, 0, squareSize * 1.4, squareSize * 1.4 * 1.185);
+					imagePos(promotionSelection[3], 6, 3, 0.5, 0, squareSize * 1.4, squareSize * 1.4 * 1.185);
+					*/
+					imagePos(glow[0], 1, 3, -0.05, 0, 1.6 * squareSize, 1.6 * squareSize);
+					imagePos(glow[1], 3, 3, 0.5, 0, 1.6 * squareSize, 1.6 * squareSize);
+					imagePos(glow[2], 4, 3, -0.05, 0, 1.6 * squareSize, 1.6 * squareSize);
+					imagePos(glow[3], 6, 3, 0.5, 0, 1.6 * squareSize, 1.6 * squareSize);
 					
-					this.arrayLogic[logic.xCoordOld][logic.yCoordOld] = new Piece();
+					//this.pane.getChildren().add(glow[0]);
+					//this.pane.getChildren().add(glow[1]);
+					//this.pane.getChildren().add(glow[2]);
+					//this.pane.getChildren().add(glow[3]);
+					
+					for (int i = 0; i < 4; i++) {
+						this.pane.getChildren().add(glow[i]);
+						this.pane.getChildren().add(promoPieces[i]);
+					}
+					
+					promote(board);
+					
+					/*
+					this.pane.getChildren().add(promotionSelection[0]);
+					this.pane.getChildren().add(promotionSelection[1]);
+					this.pane.getChildren().add(promotionSelection[2]);
+					this.pane.getChildren().add(promotionSelection[3]);
+					*/
+					/*while (promo.canProceed == false) {
+						for (promo.i = 0; promo.i < 4; promo.i++) {
+							promotionSelection[promo.i].setOnMousePressed(new EventHandler<MouseEvent>() {
+								public void handle(MouseEvent event) {
+									promo.canProceed = true;
+									promo.promoSelect = promo.i;
+								}
+							});
+						}
+					}*/
+					
+					
 				}
 			}
 
@@ -554,6 +726,7 @@ class Board {
 		logicBoard[7][2] = 10;
 		logicBoard[3][6] = 0;
 		logicBoard[1][4] = 1;*/
+		logicBoard[6][1] = 1;
 	}
 	
 	public void updateMoveHistory(int moveNum) {
@@ -1660,3 +1833,29 @@ class rookVector {
 	int x;
 	int y;
 }
+
+class promoControl {
+	int promoSelect;
+	boolean canProceed;
+	int i;
+	
+	public promoControl() {
+		this.promoSelect = 0;
+		this.canProceed = false;
+		this.i = 0;
+	}
+	/*
+	public int promoSelect(Image Knight, Image Bishop, Image Rook, Image Queen) {
+		Image theKnight = new Image();
+		
+		TheKnight.setOnMousePressed(new EventHandler<MouseEvent>() {
+			public void handle(MouseEvent event) {
+				int retVal = 2;
+				return retVal;
+			}
+		});
+		int retVal = 2;
+		return retVal;
+	}*/
+}
+
